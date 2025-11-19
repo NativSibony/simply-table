@@ -1,0 +1,35 @@
+# Source files
+src/
+docs/
+
+# Configuration files
+vite.config.ts
+tsconfig.json
+tsconfig.app.json
+tsconfig.node.json
+eslint.config.js
+
+# Development files
+index.html
+.vscode/
+.idea/
+
+# Build artifacts
+node_modules/
+*.log
+*.local
+
+# Git files
+.git/
+.gitignore
+.github/
+
+# Testing
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Misc
+.DS_Store
+*.sw?
