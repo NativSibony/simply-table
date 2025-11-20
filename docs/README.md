@@ -1,146 +1,224 @@
 # simply-table Documentation
 
-This is the documentation website for the simply-table library, built with Vite, React, TypeScript, and Tailwind CSS.
-
-## Features
-
-- **Comprehensive Examples**: Interactive examples demonstrating all library features
-- **Live Demos**: Working table implementations you can interact with
-- **Code Samples**: Syntax-highlighted code examples for easy reference
-- **Type-Safe**: Full TypeScript support with type definitions
-- **Responsive Design**: Mobile-friendly documentation layout
+This is the official documentation website for simply-table, built with React, TypeScript, and Vite.
 
 ## Development
 
 ### Prerequisites
 
-- Node.js 18.x or 20.x
-- npm, yarn, or pnpm
+- Node.js 18+ or Bun
+- npm, yarn, pnpm, or bun
 
-### Getting Started
+### Installation
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
 ```
 
-The development server will start at `http://localhost:5173`
+### Running the Development Server
 
-## Project Structure
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+The documentation site will be available at `http://localhost:5173`
+
+### Building for Production
+
+```bash
+npm run build
+# or
+yarn build
+# or
+pnpm build
+# or
+bun run build
+```
+
+### Preview Production Build
+
+```bash
+npm run preview
+# or
+yarn preview
+# or
+pnpm preview
+# or
+bun run preview
+```
+
+## Documentation Structure
 
 ```
 docs/
 ├── src/
-│   ├── components/       # Reusable components
-│   │   ├── Layout.tsx    # Main layout with navigation
-│   │   └── CodeBlock.tsx # Syntax-highlighted code blocks
-│   ├── pages/            # Documentation pages
-│   │   ├── HomePage.tsx
+│   ├── components/          # Reusable components
+│   │   ├── CodeBlock.tsx    # Syntax-highlighted code blocks with copy functionality
+│   │   ├── Layout.tsx       # Main layout with sidebar navigation
+│   │   ├── ThemeProvider.tsx # Dark/light theme support
+│   │   └── ThemeToggle.tsx  # Theme switcher component
+│   ├── pages/               # Documentation pages
+│   │   ├── HomePage.tsx     # Landing page
 │   │   ├── BasicExamplesPage.tsx
 │   │   ├── SortingFilteringPage.tsx
 │   │   ├── PaginationPage.tsx
 │   │   ├── VirtualizationPage.tsx
 │   │   ├── CustomRenderingPage.tsx
-│   │   └── AdvancedFeaturesPage.tsx
-│   ├── lib/              # Utility functions
-│   ├── App.tsx           # Main app component with routing
-│   ├── main.tsx          # Entry point
-│   └── index.css         # Global styles
-├── public/               # Static assets
-└── package.json
+│   │   ├── AdvancedFeaturesPage.tsx
+│   │   └── ApiReferencePage.tsx
+│   ├── App.tsx              # Main app component with routing
+│   ├── main.tsx             # Entry point
+│   └── index.css            # Global styles
+├── public/                  # Static assets
+└── index.html              # HTML template
 ```
 
-## Pages
+## Features
 
-### Home Page
-- Quick start guide
-- Installation instructions
-- Feature overview
-- Links to example pages
+- **Interactive Examples**: Live, editable code examples for all features
+- **Syntax Highlighting**: Beautiful code blocks with copy-to-clipboard functionality
+- **Dark Mode**: Full dark mode support with theme persistence
+- **Responsive Design**: Mobile-friendly navigation and layout
+- **Type-Safe**: Built with TypeScript for excellent developer experience
+- **Fast**: Powered by Vite for instant HMR and optimized builds
 
-### Basic Examples
-- Simple table setup
-- Column configuration
-- Row key management
+## Adding New Documentation
 
-### Sorting & Filtering
-- Client-side sorting
-- Server-side sorting
-- Client-side filtering
-- Server-side filtering
+### Creating a New Page
 
-### Pagination
-- Client-side pagination
-- Server-side pagination
-- Custom page sizes
-- Controlled pagination
+1. Create a new file in `src/pages/` (e.g., `NewFeaturePage.tsx`)
+2. Add the route in `src/App.tsx`
+3. Add navigation link in `src/components/Layout.tsx`
 
-### Virtualization
-- Performance optimization
-- Large dataset handling
-- Custom row heights
-- Performance comparison
+### Page Structure
 
-### Custom Rendering
-- Custom cell renderers
-- Status badges
-- Formatted values
-- Rich cell content
+```tsx
+import { CodeBlock } from '../components/CodeBlock';
 
-### Advanced Features
-- Column resizing
-- Column reordering
-- Custom styling
-- Loading states
+export function NewFeaturePage() {
+  return (
+    <div className="space-y-12">
+      {/* Header */}
+      <div>
+        <h1 className="text-4xl font-bold mb-4">Feature Name</h1>
+        <p className="text-lg text-muted-foreground">
+          Description of the feature
+        </p>
+      </div>
 
-## Technologies
+      {/* Table of Contents */}
+      <nav className="p-4 bg-muted/50 rounded-lg border">
+        <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase">
+          On This Page
+        </h2>
+        <ul className="space-y-2 text-sm">
+          <li><a href="#section-1" className="text-primary hover:underline">Section 1</a></li>
+        </ul>
+      </nav>
 
-- **Vite**: Fast build tool and dev server
-- **React 19**: UI framework
-- **TypeScript**: Type safety
-- **React Router**: Client-side routing
-- **Tailwind CSS**: Utility-first styling
-- **react-syntax-highlighter**: Code syntax highlighting
-- **simply-table**: The library being documented (v0.1.2)
+      {/* Content Sections */}
+      <section id="section-1" className="space-y-4 scroll-mt-20">
+        <h2 className="text-2xl font-bold">Section Title</h2>
+        <p className="text-muted-foreground">Description</p>
+        
+        {/* Live Example */}
+        <div className="border rounded-lg p-6 bg-card">
+          {/* Your example component */}
+        </div>
 
-## Building for Production
+        {/* Code Block */}
+        <CodeBlock code={exampleCode} language="typescript" />
+      </section>
 
-```bash
-npm run build
+      {/* Next Steps */}
+      <section className="p-6 bg-primary/5 border border-primary/20 rounded-lg">
+        <h2 className="text-xl font-bold mb-3">Next Steps</h2>
+        <div className="flex flex-wrap gap-3">
+          <a href="/other-page" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg">
+            Related Feature →
+          </a>
+        </div>
+      </section>
+    </div>
+  );
+}
 ```
 
-The production build will be output to the `dist/` directory.
+## Styling Guidelines
 
-## Deployment
+### Using Tailwind Classes
 
-The documentation can be deployed to any static hosting service:
+The documentation uses Tailwind CSS with a custom theme. Common patterns:
 
-- Vercel
-- Netlify
-- GitHub Pages
-- Cloudflare Pages
-- AWS S3 + CloudFront
+```tsx
+// Headers
+<h1 className="text-4xl font-bold mb-4">Title</h1>
+<h2 className="text-2xl font-bold mb-2">Subtitle</h2>
 
-Simply build the project and deploy the `dist/` directory.
+// Text
+<p className="text-muted-foreground">Description text</p>
+<code className="px-1.5 py-0.5 bg-muted rounded text-sm">inline code</code>
+
+// Containers
+<div className="border rounded-lg p-6 bg-card">Content</div>
+
+// Buttons/Links
+<a className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">
+  Button
+</a>
+```
+
+### Custom CSS Classes
+
+Available utility classes (defined in `index.css`):
+
+- `.inline-code` - Styled inline code
+- `.info-box-primary` - Primary info box
+- `.info-box-warning` - Warning info box
+- `.info-box-success` - Success info box
+- `.section-anchor` - Section with scroll offset
+- `.scrollbar-thin` - Custom thin scrollbar
+
+## Code Examples Best Practices
+
+1. **Keep examples focused**: Each example should demonstrate one concept
+2. **Make them copy-paste ready**: Examples should work without modification
+3. **Add comments**: Explain non-obvious parts
+4. **Show real-world usage**: Use realistic data and scenarios
+5. **Include TypeScript types**: Always show proper typing
 
 ## Contributing
 
-To add new examples or improve documentation:
+When contributing to the documentation:
 
-1. Create or modify pages in `src/pages/`
-2. Update routing in `src/App.tsx` if adding new pages
-3. Add navigation links in `src/components/Layout.tsx`
-4. Test locally with `npm run dev`
-5. Build and verify with `npm run build && npm run preview`
+1. Follow the existing structure and patterns
+2. Test all code examples to ensure they work
+3. Add cross-references to related pages
+4. Include "Next Steps" sections to guide users
+5. Ensure responsive design works on mobile
+6. Test both light and dark themes
+
+## Tech Stack
+
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Styling
+- **React Router** - Client-side routing
+- **React Syntax Highlighter** - Code highlighting
+- **Lucide React** - Icons
 
 ## License
 

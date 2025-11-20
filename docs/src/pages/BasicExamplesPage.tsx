@@ -29,9 +29,41 @@ export function BasicExamplesPage() {
         </p>
       </div>
 
+      {/* Quick Navigation */}
+      <nav className="p-4 bg-muted/50 rounded-lg border">
+        <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase">On This Page</h2>
+        <ul className="space-y-2 text-sm">
+          <li><a href="#simple-table" className="text-primary hover:underline">1. Simple Table</a></li>
+          <li><a href="#custom-widths" className="text-primary hover:underline">2. Custom Column Widths</a></li>
+          <li><a href="#row-key" className="text-primary hover:underline">3. Row Key Configuration</a></li>
+        </ul>
+      </nav>
+
       <Example1_SimpleTable />
       <Example2_CustomWidths />
       <Example3_RowKey />
+
+      {/* Next Steps */}
+      <section className="p-6 bg-primary/5 border border-primary/20 rounded-lg">
+        <h2 className="text-xl font-bold mb-3">Next Steps</h2>
+        <p className="text-muted-foreground mb-4">
+          Now that you understand the basics, explore more advanced features:
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <a href="/sorting-filtering" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+            Sorting & Filtering →
+          </a>
+          <a href="/pagination" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+            Pagination
+          </a>
+          <a href="/virtualization" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+            Virtualization
+          </a>
+          <a href="/api-reference" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+            API Reference
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
@@ -81,10 +113,12 @@ function App() {
 }`;
 
   return (
-    <section className="space-y-4">
+    <section id="simple-table" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">1. Simple Table</h2>
-        <p className="text-muted-foreground">The most basic table configuration with default settings.</p>
+        <p className="text-muted-foreground">
+          The most basic table configuration with default settings. This example shows how to create a table with minimal configuration.
+        </p>
       </div>
 
       <div className="border rounded-lg p-6 bg-card">
@@ -123,10 +157,12 @@ function Example2_CustomWidths() {
 />`;
 
   return (
-    <section className="space-y-4">
+    <section id="custom-widths" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">2. Custom Column Widths</h2>
-        <p className="text-muted-foreground">Specify custom widths for each column to control the table layout.</p>
+        <p className="text-muted-foreground">
+          Specify custom widths for each column to control the table layout. Use the <code className="px-1.5 py-0.5 bg-muted rounded text-sm">width</code> property to set fixed column widths in pixels.
+        </p>
       </div>
 
       <div className="border rounded-lg p-6 bg-card">
@@ -166,11 +202,12 @@ function Example3_RowKey() {
 />`;
 
   return (
-    <section className="space-y-4">
+    <section id="row-key" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">3. Row Key Configuration</h2>
         <p className="text-muted-foreground">
-          The rowKey prop is used to uniquely identify each row. You can use a field name or a function.
+          The <code className="px-1.5 py-0.5 bg-muted rounded text-sm">rowKey</code> prop is used to uniquely identify each row.
+          You can use a field name or a function. This is essential for React's reconciliation process.
         </p>
       </div>
 

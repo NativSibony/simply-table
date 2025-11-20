@@ -21,6 +21,19 @@ const sampleData: User[] = [
   { id: 5, name: "Charlie Brown", email: "charlie@example.com", role: "User", status: "Active" },
 ];
 
+// Generate large dataset for virtualization testing
+const generateLargeDataset = (count: number): User[] => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
+    name: `User ${i + 1}`,
+    email: `user${i + 1}@example.com`,
+    role: ["Admin", "User", "Manager"][i % 3],
+    status: ["Active", "Inactive"][i % 2],
+  }));
+};
+
+const largeDataset = generateLargeDataset(10000);
+
 // eslint-disable-next-line react-refresh/only-export-components
 function Main() {
   return (
@@ -28,6 +41,7 @@ function Main() {
       <Example1_SimpleTable />
       <Example2_CustomWidths />
       <Example3_RowKey />
+      <Example4_VirtualizationTest />
     </div>
   );
 }
@@ -169,6 +183,55 @@ function Example3_RowKey() {
         <p className="text-sm">
           <strong>Note:</strong> The rowKey is essential for React's reconciliation process. It should be unique for
           each row and stable across renders.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function Example4_VirtualizationTest() {
+  const columns: Column<User>[] = [
+    { id: "id", field: "id", header: "ID", width: 80 },
+    { id: "name", field: "name", header: "Name", width: 200 },
+    { id: "email", field: "email", header: "Email", width: 250 },
+    { id: "role", field: "role", header: "Role", width: 150 },
+    { id: "status", field: "status", header: "Status", width: 120 },
+  ];
+
+  return (
+    <section className="space-y-4">
+      <div>
+        <h2 className="text-2xl font-bold mb-2">4. Virtualization Test (10,000 Rows)</h2>
+        <p className="text-muted-foreground">
+          Testing virtualization with a large dataset. Scroll through the table to verify smooth performance.
+        </p>
+      </div>
+
+      <div className="border rounded-lg p-6 bg-card">
+        <SimplyTable
+          columns={columns}
+          rows={largeDataset}
+          rowKey="id"
+          enableVirtualization={true}
+          rowHeight={48}
+          overscanCount={5}
+          className="h-[600px]"
+          classNames={{
+            header: "rounded-t-lg",
+            row: "bg-transparent",
+          }}
+        />
+      </div>
+
+      <div className="p-4 bg-muted rounded-lg space-y-2">
+        <p className="text-sm">
+          <strong>Total Rows:</strong> {largeDataset.length.toLocaleString()}
+        </p>
+        <p className="text-sm">
+          <strong>Virtualization:</strong> Enabled
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Only visible rows are rendered in the DOM. Scroll to test performance!
         </p>
       </div>
     </section>

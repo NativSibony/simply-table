@@ -218,39 +218,106 @@ const columns: Column<Product>[] = [
 }
 
 function Example4_ServerMode() {
-  const code = `// Server-side sorting
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Product[]>(sampleProducts);
+  const [sortModel, setSortModel] = useState<SortModel[]>([]);
+
+  // Simulate server-side sorting
+  const handleSortChange = (newSortModel: SortModel[]) => {
+    setSortModel(newSortModel);
+    setLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      const sorted = [...sampleProducts];
+      
+      if (newSortModel.length > 0) {
+        sorted.sort((a, b) => {
+          for (const sort of newSortModel) {
+            const aVal = a[sort.field as keyof Product];
+            const bVal = b[sort.field as keyof Product];
+            
+            if (aVal === bVal) continue;
+            
+            const comparison = aVal > bVal ? 1 : -1;
+            return sort.sort === 'asc' ? comparison : -comparison;
+          }
+          return 0;
+        });
+      }
+      
+      setData(sorted);
+      setLoading(false);
+    }, 500);
+  };
+
+  const columns: Column<Product>[] = [
+    { id: 'name', field: 'name', header: 'Product Name', width: 200, sortable: true },
+    { id: 'category', field: 'category', header: 'Category', width: 150, sortable: true },
+    { id: 'price', field: 'price', header: 'Price', width: 120, sortable: true },
+    { id: 'stock', field: 'stock', header: 'Stock', width: 100, sortable: true },
+  ];
+
+  const code = `const [loading, setLoading] = useState(false);
+const [data, setData] = useState<Product[]>([]);
+const [sortModel, setSortModel] = useState<SortModel[]>([]);
+
+const handleSortChange = (newSortModel: SortModel[]) => {
+  setSortModel(newSortModel);
+  setLoading(true);
+
+  // Fetch sorted data from API
+  fetchProducts({ sort: newSortModel }).then(result => {
+    setData(result);
+    setLoading(false);
+  });
+};
+
 <SimplyTable
   columns={columns}
-  rows={rows}
+  rows={data}
   rowKey="id"
   sortMode="server"
   sortModel={sortModel}
-  onSortChange={(model) => {
-    // Fetch data from server with new sort
-    fetchData({ sort: model });
-  }}
-/>
-
-// Server-side filtering
-<SimplyTable
-  columns={columns}
-  rows={rows}
-  rowKey="id"
-  filterMode="server"
-  filterModel={filterModel}
-  onFilterChange={(model) => {
-    // Fetch data from server with new filters
-    fetchData({ filters: model });
-  }}
+  onSortChange={handleSortChange}
+  loading={loading}
 />`;
 
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold mb-2">4. Server-Side Mode</h2>
+        <h2 className="text-2xl font-bold mb-2">4. Server-Side Sorting</h2>
         <p className="text-muted-foreground">
-          For large datasets, use server-side sorting and filtering by setting mode to "server".
+          For large datasets, use server-side sorting. The table shows a loading state while fetching sorted data from the server.
         </p>
+      </div>
+
+      <div className="border rounded-lg p-6 bg-card space-y-4">
+        {loading && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            Loading sorted data...
+          </div>
+        )}
+
+        <SimplyTable
+          columns={columns}
+          rows={data}
+          rowKey="id"
+          sortMode="server"
+          sortModel={sortModel}
+          onSortChange={handleSortChange}
+          loading={loading}
+        />
+
+        {sortModel.length > 0 && (
+          <div className="p-4 bg-muted rounded-lg">
+            <h4 className="font-semibold mb-2">Server Sort Request:</h4>
+            <pre className="text-sm overflow-x-auto">
+              {JSON.stringify(sortModel, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
 
       <div>
@@ -260,8 +327,8 @@ function Example4_ServerMode() {
 
       <div className="p-4 border-l-4 border-primary bg-primary/5 rounded space-y-2">
         <p className="text-sm">
-          <strong>Server Mode:</strong> When using server mode, the table won't perform sorting/filtering
-          locally. Instead, it will call your onChange handlers, allowing you to fetch sorted/filtered
+          <strong>Server Mode:</strong> When using server mode, the table won't perform sorting
+          locally. Instead, it will call your onChange handler, allowing you to fetch sorted
           data from your backend.
         </p>
         <p className="text-sm">

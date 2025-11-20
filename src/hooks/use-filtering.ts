@@ -5,10 +5,13 @@ export function useFiltering<T>(
   rows: T[],
   columns: Column<T>[],
   filterMode: "client" | "server" = "client",
-  initialFilterModel?: FilterModel,
+  externalFilterModel?: FilterModel,
   onFilterChange?: (model: FilterModel) => void
 ) {
-  const [filterModel, setFilterModel] = useState<FilterModel>(initialFilterModel || {});
+  const [internalFilterModel, setInternalFilterModel] = useState<FilterModel>({});
+
+  // Use external filter model if provided (controlled mode), otherwise use internal state
+  const filterModel = externalFilterModel !== undefined ? externalFilterModel : internalFilterModel;
 
   const handleFilterChange = useCallback(
     (field: string, value: any, operator: string = "contains") => {
@@ -20,14 +23,15 @@ export function useFiltering<T>(
         newFilterModel[field] = { value, operator: operator as any };
       }
 
-      setFilterModel(newFilterModel);
+      setInternalFilterModel(newFilterModel);
       onFilterChange?.(newFilterModel);
     },
     [filterModel, onFilterChange]
   );
 
   const filteredRows = useMemo(() => {
-    if (filterMode === "server" || Object.keys(filterModel).length === 0) {
+    const activeFilterModel = filterModel || {};
+    if (filterMode === "server" || Object.keys(activeFilterModel).length === 0) {
       return rows;
     }
 

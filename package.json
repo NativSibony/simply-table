@@ -1,7 +1,7 @@
 {
   "name": "simply-table",
   "version": "0.1.3",
-  "description": "A production-ready table library",
+  "description": "A simple table library",
   "type": "module",
   "main": "./dist/simply-table.umd.cjs",
   "module": "./dist/simply-table.js",

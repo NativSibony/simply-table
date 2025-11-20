@@ -117,4 +117,99 @@
   body {
     @apply bg-background text-foreground;
   }
+
+/* Enhanced typography and smooth scrolling */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  code {
+    @apply text-sm font-mono;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
+
+/* Utility components for documentation */
+@layer components {
+  .inline-code {
+    @apply px-1.5 py-0.5 bg-muted rounded text-sm font-mono;
+  }
+
+  .info-box-primary {
+    @apply p-4 border-l-4 rounded-r-lg border-primary bg-primary/5;
+  }
+
+  .info-box-warning {
+    @apply p-4 border-l-4 rounded-r-lg border-yellow-500 bg-yellow-50 dark:bg-yellow-950;
+  }
+
+  .info-box-success {
+    @apply p-4 border-l-4 rounded-r-lg border-green-500 bg-green-50 dark:bg-green-950;
+  }
+
+  .section-anchor {
+    @apply scroll-mt-20;
+  }
+
+  .toc-link {
+    @apply text-primary hover:underline transition-all;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 border-2 border-border rounded-lg font-semibold hover:bg-accent transition-all;
+  }
+
+  .card-hover {
+    @apply transition-all hover:shadow-lg hover:border-primary/50;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent;
+  }
+
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
 }

@@ -53,6 +53,7 @@ export function SimplyTable<T = any>({
 }: SimplyTableProps<T>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const bodyScrollRef = useRef<HTMLDivElement>(null);
+  const headerScrollRef = useRef<HTMLDivElement>(null);
   const [containerHeight] = useState(600);
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => {
     const widths: Record<string, number> = {};
@@ -113,12 +114,23 @@ export function SimplyTable<T = any>({
   const displayData = enablePagination ? paginatedRows : sortedRows;
 
   // Virtualization
-  const { virtualRows, totalHeight, offsetY } = useVirtualization({
+  const { virtualRows, totalHeight, offsetY, handleScroll, scrollRef } = useVirtualization({
     totalRows: displayData.length,
     rowHeight,
     containerHeight,
     overscanCount,
   });
+
+  // Sync horizontal scroll between header and body
+  const handleBodyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (enableVirtualization) {
+      handleScroll(e);
+    }
+    // Sync horizontal scroll to header
+    if (headerScrollRef.current) {
+      headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft;
+    }
+  };
 
   const handleResizeColumn = (columnId: string, newWidth: number) => {
     setColumnWidths((prev) => ({
@@ -147,30 +159,44 @@ export function SimplyTable<T = any>({
 
   return (
     <div className={cn("flex flex-col border rounded-lg bg-card", className, classNames?.root)}>
-      <div className={cn("flex-1 overflow-auto", classNames?.container)} ref={bodyScrollRef}>
+      {/* Header - sticky, outside scroll container */}
+      <div
+        ref={headerScrollRef}
+        className="overflow-x-auto overflow-y-hidden"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
         <div className="min-w-max">
-          <SimplyTableHeader
-            columns={reorderedColumns}
-            sortModel={sortModel}
-            onSort={handleSort}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onDragEnd={handleDragEnd}
-            onResizeColumn={handleResizeColumn}
-            draggedColumn={draggedColumn}
-            dragOverColumn={dragOverColumn}
-            className={headerClassName}
-            classNames={classNames}
-            sortIcon={sortIcon}
-            resizeHandle={resizeHandle}
-            dragIndicator={dragIndicator}
-            sortIconClassName={sortIconClassName}
-            resizeHandleClassName={resizeHandleClassName}
-            defaultMinResizeWidth={defaultMinResizeWidth}
-            defaultMaxResizeWidth={defaultMaxResizeWidth}
+        <SimplyTableHeader
+          columns={reorderedColumns}
+          sortModel={sortModel}
+          onSort={handleSort}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragEnd={handleDragEnd}
+          onResizeColumn={handleResizeColumn}
+          draggedColumn={draggedColumn}
+          dragOverColumn={dragOverColumn}
+          className={headerClassName}
+          classNames={classNames}
+          sortIcon={sortIcon}
+          resizeHandle={resizeHandle}
+          dragIndicator={dragIndicator}
+          sortIconClassName={sortIconClassName}
+          resizeHandleClassName={resizeHandleClassName}
+          defaultMinResizeWidth={defaultMinResizeWidth}
+          defaultMaxResizeWidth={defaultMaxResizeWidth}
           />
+        </div>
+      </div>
 
+      {/* Body - scrollable container */}
+      <div
+        className={cn("flex-1 overflow-auto", classNames?.container)}
+        ref={enableVirtualization ? scrollRef : bodyScrollRef}
+        onScroll={handleBodyScroll}
+      >
+        <div className="min-w-max">
           <div ref={containerRef} className={cn("relative min-h-0", classNames?.body)}>
             {loading && (
               <div className={cn("absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm z-20", classNames?.loadingOverlay)}>

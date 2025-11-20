@@ -1,6 +1,6 @@
 # simply-table
 
-A highly customizable, production-ready table library for React applications with sensible defaults and full styling control.
+A highly customizable, table library for React applications with sensible defaults and full styling control.
 
 [![CI](https://github.com/NativSibony/simply-table/actions/workflows/ci.yml/badge.svg)](https://github.com/NativSibony/simply-table/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/simply-table.svg)](https://www.npmjs.com/package/simply-table)

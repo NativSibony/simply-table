@@ -31,14 +31,57 @@ export function VirtualizationPage() {
       <div>
         <h1 className="text-4xl font-bold mb-4">Virtualization</h1>
         <p className="text-lg text-muted-foreground">
-          Optimize performance for large datasets with row virtualization.
+          Optimize performance for large datasets with row virtualization. Only visible rows are rendered, dramatically improving performance.
         </p>
       </div>
+
+      {/* Important Notice */}
+      <div className="p-6 bg-yellow-50 dark:bg-yellow-950 border-l-4 border-yellow-500 rounded-r-lg">
+        <h3 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2">⚠️ Important: Fixed Height Required</h3>
+        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          For virtualization to work properly, the table <strong>must have a fixed height</strong>.
+          Set this using the <code className="px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-900 rounded">className</code> prop
+          (e.g., <code className="px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-900 rounded">className="h-[600px]"</code>).
+        </p>
+      </div>
+
+      {/* Quick Navigation */}
+      <nav className="p-4 bg-muted/50 rounded-lg border">
+        <h2 className="text-sm font-semibold mb-3 text-muted-foreground uppercase">On This Page</h2>
+        <ul className="space-y-2 text-sm">
+          <li><a href="#without-virtualization" className="text-primary hover:underline">1. Without Virtualization</a></li>
+          <li><a href="#with-virtualization" className="text-primary hover:underline">2. With Virtualization</a></li>
+          <li><a href="#custom-row-height" className="text-primary hover:underline">3. Custom Row Height</a></li>
+          <li><a href="#performance-comparison" className="text-primary hover:underline">Performance Comparison</a></li>
+        </ul>
+      </nav>
 
       <Example1_WithoutVirtualization />
       <Example2_WithVirtualization />
       <Example3_CustomRowHeight />
       <PerformanceComparison />
+
+      {/* Next Steps */}
+      <section className="p-6 bg-primary/5 border border-primary/20 rounded-lg">
+        <h2 className="text-xl font-bold mb-3">Next Steps</h2>
+        <p className="text-muted-foreground mb-4">
+          Learn how to combine virtualization with other features:
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <a href="/pagination" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+            Pagination →
+          </a>
+          <a href="/sorting-filtering" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+            Sorting & Filtering
+          </a>
+          <a href="/advanced" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+            Advanced Features
+          </a>
+          <a href="/api-reference" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+            API Reference
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
@@ -63,11 +106,12 @@ function Example1_WithoutVirtualization() {
 />`;
 
   return (
-    <section className="space-y-4">
+    <section id="without-virtualization" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">1. Without Virtualization</h2>
         <p className="text-muted-foreground">
           Standard rendering - all rows are rendered in the DOM. Works well for small datasets (&lt; 100 rows).
+          Every row is present in the DOM, which can impact performance with larger datasets.
         </p>
       </div>
 
@@ -76,6 +120,7 @@ function Example1_WithoutVirtualization() {
           columns={columns}
           rows={smallDataset}
           rowKey="id"
+                    className="h-[600px]"
           enableVirtualization={false}
           pageSize={100}
         />
@@ -106,6 +151,7 @@ function Example2_WithVirtualization() {
   ];
 
   const code = `// With virtualization - only visible rows are rendered
+// IMPORTANT: The table must have a fixed height for virtualization to work
 <SimplyTable
   columns={columns}
   rows={rows} // 10,000 rows
@@ -113,18 +159,20 @@ function Example2_WithVirtualization() {
   enableVirtualization={true}
   rowHeight={48}
   overscanCount={5}
+  className="h-[600px]" // Required: Fixed height for virtualization
 />`;
 
   return (
-    <section className="space-y-4 overflow-auto">
+    <section id="with-virtualization" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">2. With Virtualization</h2>
         <p className="text-muted-foreground">
-          Only visible rows are rendered. Ideal for large datasets (1000+ rows).
+          Only visible rows are rendered, dramatically improving performance. Ideal for large datasets (1000+ rows).
+          This example demonstrates smooth scrolling through 10,000 rows.
         </p>
       </div>
 
-      <div className="border rounded-lg p-6 bg-card max-h-[600px] overflow-auto">
+      <div className="border rounded-lg p-6 bg-card">
         <SimplyTable
           columns={columns}
           rows={largeDataset}
@@ -132,7 +180,7 @@ function Example2_WithVirtualization() {
           enableVirtualization={true}
           rowHeight={48}
           overscanCount={5}
-          pageSize={10000}
+          className="h-[600px]"
         />
       </div>
 
@@ -172,14 +220,16 @@ function Example3_CustomRowHeight() {
   enableVirtualization={true}
   rowHeight={64}        // Taller rows
   overscanCount={10}    // More rows buffered
+  className="h-[600px]" // Required: Fixed height
 />`;
 
   return (
-    <section className="space-y-4">
+    <section id="custom-row-height" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">3. Custom Row Height</h2>
         <p className="text-muted-foreground">
-          Adjust row height and overscan count for your specific needs.
+          Adjust row height and overscan count for your specific needs. The <code className="px-1.5 py-0.5 bg-muted rounded text-sm">rowHeight</code> must
+          match your actual row height for accurate scrolling calculations.
         </p>
       </div>
 
@@ -191,7 +241,7 @@ function Example3_CustomRowHeight() {
           enableVirtualization={true}
           rowHeight={64}
           overscanCount={10}
-          pageSize={1000}
+          className="h-[600px]"
         />
       </div>
 
@@ -205,6 +255,7 @@ function Example3_CustomRowHeight() {
           <strong>Configuration Options:</strong>
         </p>
         <ul className="text-sm space-y-1 ml-4 list-disc">
+          <li><code className="px-1 bg-muted rounded">className</code>: Must include a fixed height (e.g., "h-[600px]") for virtualization to work</li>
           <li><code className="px-1 bg-muted rounded">rowHeight</code>: Height of each row in pixels (default: 48)</li>
           <li><code className="px-1 bg-muted rounded">overscanCount</code>: Number of rows to render outside viewport (default: 5)</li>
           <li>Higher overscan = smoother scrolling but more DOM nodes</li>
@@ -216,11 +267,11 @@ function Example3_CustomRowHeight() {
 
 function PerformanceComparison() {
   return (
-    <section className="space-y-4">
+    <section id="performance-comparison" className="space-y-4 scroll-mt-20">
       <div>
         <h2 className="text-2xl font-bold mb-2">Performance Comparison</h2>
         <p className="text-muted-foreground">
-          Understanding when to use virtualization.
+          Understanding when to use virtualization and the trade-offs involved.
         </p>
       </div>
 
@@ -294,11 +345,14 @@ function PerformanceComparison() {
         </div>
       </div>
 
-      <div className="p-6 bg-primary/10 border border-primary/20 rounded-lg">
+      <div className="p-6 bg-primary/10 border border-primary/20 rounded-lg space-y-2">
         <h4 className="font-semibold mb-2">Recommendation</h4>
         <p className="text-sm">
           Use virtualization when you have more than 100 rows, or when you notice performance issues.
           For datasets under 100 rows, standard rendering is simpler and works well.
+        </p>
+        <p className="text-sm font-semibold text-primary mt-2">
+          ⚠️ Important: The table must have a fixed height (via className prop) for virtualization to work properly.
         </p>
       </div>
     </section>
