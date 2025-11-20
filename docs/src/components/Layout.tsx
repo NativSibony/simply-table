@@ -2,6 +2,7 @@ import { type ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { Menu, X } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 interface LayoutProps {
   children: ReactNode;
@@ -42,8 +43,10 @@ export function Layout({ children }: LayoutProps) {
           {/* Sidebar header */}
           <div className="flex items-center justify-between h-16 px-6 border-b">
             <Link to="/" className="text-xl font-bold text-primary" onClick={() => setSidebarOpen(false)}>
-              simply-table
+              Simply-Table
             </Link>
+
+            <ThemeToggle />
             <button
               onClick={() => setSidebarOpen(false)}
               className="lg:hidden p-2 rounded-md hover:bg-accent"

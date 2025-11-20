@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { CodeBlock } from '../components/CodeBlock';
+import { Link } from "react-router-dom";
+import { CodeBlock } from "../components/CodeBlock";
 
 export function HomePage() {
   const installCode = `npm install simply-table
@@ -47,12 +47,11 @@ function App() {
     <div className="space-y-12">
       {/* Hero Section */}
       <div className="text-center space-y-4">
-        <h1 className="text-5xl font-bold tracking-tight">
-          simply-table
-        </h1>
+        <h1 className="text-5xl font-bold tracking-tight">simply-table</h1>
+
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          A production-ready, feature-rich table library for React applications.
-          Built with TypeScript, optimized for performance, and designed for flexibility.
+          A production-ready, feature-rich table library for React applications. Built with TypeScript, optimized for
+          performance, and designed for flexibility.
         </p>
         <div className="flex gap-4 justify-center pt-4">
           <Link
@@ -109,9 +108,7 @@ function App() {
       {/* Quick Start */}
       <section className="space-y-4">
         <h2 className="text-3xl font-bold">Quick Start</h2>
-        <p className="text-muted-foreground">
-          Get started with simply-table in just a few lines of code:
-        </p>
+        <p className="text-muted-foreground">Get started with simply-table in just a few lines of code:</p>
         <CodeBlock code={quickStartCode} />
       </section>
 
@@ -152,11 +149,7 @@ function App() {
             title="Sorting & Filtering"
             description="Implement sorting and filtering functionality"
           />
-          <ExampleLink
-            to="/pagination"
-            title="Pagination"
-            description="Add pagination to handle large datasets"
-          />
+          <ExampleLink to="/pagination" title="Pagination" description="Add pagination to handle large datasets" />
           <ExampleLink
             to="/virtualization"
             title="Virtualization"
@@ -212,10 +205,7 @@ interface ExampleLinkProps {
 
 function ExampleLink({ to, title, description }: ExampleLinkProps) {
   return (
-    <Link
-      to={to}
-      className="block p-6 border rounded-lg bg-card hover:border-primary transition-colors"
-    >
+    <Link to={to} className="block p-6 border rounded-lg bg-card hover:border-primary transition-colors">
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground">{description}</p>
     </Link>
