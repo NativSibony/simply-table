@@ -47,12 +47,14 @@ function App() {
     <div className="space-y-16">
       {/* Hero Section */}
       <div className="text-center space-y-6 py-8">
-        <div className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-          v0.1.4
+        <div className="flex justify-center items-center space-x-4">
+          <h1 className="text-6xl font-bold tracking-tight bg-linear-to-r pb-1 from-primary to-primary/60 bg-clip-text text-transparent">
+            simply-table
+          </h1>
+          <div className="inline-block text-xs px-3 py-1 bg-primary/10 self-end text-primary rounded-full mb-2 font-medium">
+            v0.1.5
+          </div>
         </div>
-        <h1 className="text-6xl font-bold tracking-tight bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          simply-table
-        </h1>
 
         <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
           A powerful, table library for React. Built with TypeScript, optimized for performance, and designed for

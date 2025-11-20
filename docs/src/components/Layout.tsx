@@ -58,7 +58,7 @@ export function Layout({ children }: LayoutProps) {
 
           {/* Version badge */}
           <div className="px-6 py-3 border-b">
-            <span className="text-sm text-muted-foreground">v0.1.4</span>
+            <span className="text-sm text-muted-foreground">v0.1.5</span>
           </div>
 
           {/* Navigation links */}
