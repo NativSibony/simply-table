@@ -11,8 +11,7 @@ interface LayoutProps {
 const navigation = [
   { name: 'Home', path: '/', section: 'Getting Started' },
   { name: 'Basic Examples', path: '/basic', section: 'Examples' },
-  { name: 'Sorting & Filtering', path: '/sorting-filtering', section: 'Examples' },
-  { name: 'Filtering Examples', path: '/filtering', section: 'Examples' },
+  { name: 'Sorting & Filtering', path: '/filtering', section: 'Examples' },
   { name: 'Pagination', path: '/pagination', section: 'Examples' },
   { name: 'Virtualization', path: '/virtualization', section: 'Examples' },
   { name: 'Custom Rendering', path: '/custom-rendering', section: 'Examples' },
