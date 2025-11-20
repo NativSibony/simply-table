@@ -4,15 +4,24 @@ import { resolve } from "path";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import dts from "vite-plugin-dts";
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    cssInjectedByJsPlugin(),
     dts({
       include: ["src/**/*"],
-      exclude: ["src/**/*.test.ts", "src/**/*.test.tsx", "docs"],
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/main.tsx",
+        "src/components/**/*",
+        "src/lib/**/*",
+        "docs"
+      ],
       insertTypesEntry: true,
       tsconfigPath: "./tsconfig.app.json",
     }),

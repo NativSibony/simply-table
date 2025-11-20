@@ -23,6 +23,7 @@ export function SimplyTable<T = any>({
   filterMode = "client",
   filterModel: externalFilterModel,
   onFilterChange,
+  enablePagination = false,
   paginationMode = "client",
   page: externalPage,
   pageSize: externalPageSize = 10,
@@ -30,13 +31,23 @@ export function SimplyTable<T = any>({
   onPageChange,
   onPageSizeChange,
   pageSizeOptions,
+  paginationComponent: PaginationComponent = SimplyTablePagination,
+  paginationClassName,
   onColumnReorder,
   onColumnResize,
+  defaultMinResizeWidth = 50,
+  defaultMaxResizeWidth = 800,
   rowRenderer,
+  sortIcon,
+  resizeHandle,
+  dragIndicator,
   className,
   headerClassName,
   rowClassName,
   cellClassName,
+  sortIconClassName,
+  resizeHandleClassName,
+  classNames,
   loading,
   noRowsOverlay,
 }: SimplyTableProps<T>) {
@@ -87,10 +98,10 @@ export function SimplyTable<T = any>({
     onSortChange
   );
 
-  // Pagination
+  // Pagination (only if enabled)
   const { paginatedRows, page, pageSize, totalPages, handlePageChange, handlePageSizeChange } = usePagination(
     sortedRows,
-    paginationMode,
+    enablePagination ? paginationMode : 'client',
     externalPage,
     externalPageSize,
     externalTotalRows,
@@ -98,9 +109,12 @@ export function SimplyTable<T = any>({
     onPageSizeChange
   );
 
+  // Use sorted rows directly if pagination is disabled
+  const displayData = enablePagination ? paginatedRows : sortedRows;
+
   // Virtualization
   const { virtualRows, totalHeight, offsetY } = useVirtualization({
-    totalRows: paginatedRows.length,
+    totalRows: displayData.length,
     rowHeight,
     containerHeight,
     overscanCount,
@@ -128,12 +142,12 @@ export function SimplyTable<T = any>({
   };
 
   const displayRows = enableVirtualization
-    ? virtualRows.map((index) => ({ row: paginatedRows[index], index }))
-    : paginatedRows.map((row, index) => ({ row, index }));
+    ? virtualRows.map((index) => ({ row: displayData[index], index }))
+    : displayData.map((row, index) => ({ row, index }));
 
   return (
-    <div className={cn("flex flex-col border rounded-lg bg-card", className)}>
-      <div className="flex-1 overflow-auto" ref={bodyScrollRef}>
+    <div className={cn("flex flex-col border rounded-lg bg-card", className, classNames?.root)}>
+      <div className={cn("flex-1 overflow-auto", classNames?.container)} ref={bodyScrollRef}>
         <div className="min-w-max">
           <SimplyTableHeader
             columns={reorderedColumns}
@@ -147,22 +161,30 @@ export function SimplyTable<T = any>({
             draggedColumn={draggedColumn}
             dragOverColumn={dragOverColumn}
             className={headerClassName}
+            classNames={classNames}
+            sortIcon={sortIcon}
+            resizeHandle={resizeHandle}
+            dragIndicator={dragIndicator}
+            sortIconClassName={sortIconClassName}
+            resizeHandleClassName={resizeHandleClassName}
+            defaultMinResizeWidth={defaultMinResizeWidth}
+            defaultMaxResizeWidth={defaultMaxResizeWidth}
           />
 
-          <div ref={containerRef} className="relative min-h-0">
+          <div ref={containerRef} className={cn("relative min-h-0", classNames?.body)}>
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm z-20">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <div className={cn("absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm z-20", classNames?.loadingOverlay)}>
+                <div className={cn("w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin", classNames?.loadingSpinner)} />
               </div>
             )}
 
-            {!loading && paginatedRows.length === 0 && (
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
+            {!loading && displayData.length === 0 && (
+              <div className={cn("flex items-center justify-center py-12 text-muted-foreground", classNames?.emptyState)}>
                 {noRowsOverlay || "No rows to display"}
               </div>
             )}
 
-            {enableVirtualization && paginatedRows.length > 0 && (
+            {enableVirtualization && displayData.length > 0 && (
               <div style={{ height: totalHeight, position: "relative" }}>
                 <div style={{ transform: `translateY(${offsetY}px)` }}>
                   {displayRows.map(({ row, index }) => {
@@ -178,6 +200,7 @@ export function SimplyTable<T = any>({
                         cellClassName={cellClassName}
                         rowClassName={rowClassName}
                         columnWidths={columnWidths}
+                        classNames={classNames}
                       />
                     );
 
@@ -196,7 +219,7 @@ export function SimplyTable<T = any>({
               </div>
             )}
 
-            {!enableVirtualization && paginatedRows.length > 0 && (
+            {!enableVirtualization && displayData.length > 0 && (
               <div>
                 {displayRows.map(({ row, index }) => {
                   if (!row) return null;
@@ -211,6 +234,7 @@ export function SimplyTable<T = any>({
                       cellClassName={cellClassName}
                       rowClassName={rowClassName}
                       columnWidths={columnWidths}
+                      classNames={classNames}
                     />
                   );
 
@@ -231,15 +255,18 @@ export function SimplyTable<T = any>({
         </div>
       </div>
 
-      <SimplyTablePagination
-        page={page}
-        pageSize={pageSize}
-        totalPages={totalPages}
-        totalRows={externalTotalRows || sortedRows.length}
-        pageSizeOptions={pageSizeOptions}
-        onPageChange={handlePageChange}
-        onPageSizeChange={handlePageSizeChange}
-      />
+      {enablePagination && (
+        <PaginationComponent
+          page={page}
+          pageSize={pageSize}
+          totalPages={totalPages}
+          totalRows={externalTotalRows || sortedRows.length}
+          pageSizeOptions={pageSizeOptions}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          className={cn(paginationClassName, classNames?.pagination)}
+        />
+      )}
     </div>
   );
 }

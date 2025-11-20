@@ -1,11 +1,20 @@
 import { useState } from "react";
 import type { Column } from "../types";
 
-const MAX_WIDTH = 400;
-const MIN_WIDTH = 50;
+export interface UseColumnResizeOptions<T> {
+  column: Column<T>;
+  onResize?: (width: number) => void;
+  defaultMinWidth?: number;
+  defaultMaxWidth?: number;
+}
 
-export function useColumnResize<T>({ column, onResize }: { column: Column<T>; onResize?: (width: number) => void }) {
-  const [newWidth, setNewWidth] = useState(column.width ?? MIN_WIDTH);
+export function useColumnResize<T>({
+  column,
+  onResize,
+  defaultMinWidth = 50,
+  defaultMaxWidth = 800,
+}: UseColumnResizeOptions<T>) {
+  const [newWidth, setNewWidth] = useState(column.width ?? defaultMinWidth);
 
   const onResizeStart = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -13,8 +22,8 @@ export function useColumnResize<T>({ column, onResize }: { column: Column<T>; on
 
     const startX = event.clientX;
     const width = newWidth;
-    const maxWidth = column.maxWidth || MAX_WIDTH;
-    const minWidth = column.minWidth || MIN_WIDTH;
+    const maxWidth = column.maxWidth || defaultMaxWidth;
+    const minWidth = column.minWidth || defaultMinWidth;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
       const deltaX = moveEvent.clientX - startX;

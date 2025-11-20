@@ -1,4 +1,4 @@
-import { Column, CellRendererParams } from "./types";
+import { Column, CellRendererParams, TableClassNames } from "./types";
 import { cn } from "@/lib/utils";
 
 interface SimplyTableRowProps<T> {
@@ -9,6 +9,7 @@ interface SimplyTableRowProps<T> {
   cellClassName?: string | ((params: CellRendererParams<T>) => string);
   rowClassName?: string | ((row: T, index: number) => string);
   columnWidths?: Record<string, number>;
+  classNames?: TableClassNames<T>;
 }
 
 export function SimplyTableRow<T>({
@@ -19,6 +20,7 @@ export function SimplyTableRow<T>({
   cellClassName,
   rowClassName,
   columnWidths,
+  classNames,
 }: SimplyTableRowProps<T>) {
   const rowClass = typeof rowClassName === "function" ? rowClassName(row, rowIndex) : rowClassName;
 
@@ -27,7 +29,9 @@ export function SimplyTableRow<T>({
       className={cn(
         "flex border-b last:border-b-0 hover:bg-muted/50 transition-colors",
         isEven && "bg-muted/20",
-        rowClass
+        rowClass,
+        classNames?.row && (typeof classNames.row === 'function' ? classNames.row(row, rowIndex) : classNames.row),
+        isEven ? classNames?.rowEven : classNames?.rowOdd
       )}
     >
       {columns.map((column) => {
@@ -49,7 +53,8 @@ export function SimplyTableRow<T>({
             key={column.id}
             className={cn(
               "px-4 py-3 border-r last:border-r-0 text-sm flex items-center overflow-hidden min-w-0",
-              cellClass
+              cellClass,
+              classNames?.cell && (typeof classNames.cell === 'function' ? classNames.cell(params) : classNames.cell)
             )}
             style={{
               width: `${width}px`,

@@ -60,6 +60,7 @@ function Example1_ClientPagination() {
   columns={columns}
   rows={employees}
   rowKey="id"
+  enablePagination={true}
   paginationMode="client"
   pageSize={10}
 />`;
@@ -67,8 +68,9 @@ function Example1_ClientPagination() {
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-2xl font-bold mb-2">1. Client-Side Pagination</h2>
+        <h2 className="text-2xl font-bold mb-2">1. Client-Side Pagination (Opt-in)</h2>
         <p className="text-muted-foreground">
+          Enable pagination with <code className="px-1 bg-muted rounded">enablePagination=&#123;true&#125;</code>.
           Automatically paginate data on the client side. Default page size is 10 rows.
         </p>
       </div>
@@ -78,6 +80,7 @@ function Example1_ClientPagination() {
           columns={columns}
           rows={allEmployees}
           rowKey="id"
+          enablePagination={true}
           paginationMode="client"
           pageSize={10}
         />
@@ -109,6 +112,7 @@ function Example2_CustomPageSize() {
   columns={columns}
   rows={employees}
   rowKey="id"
+  enablePagination={true}
   paginationMode="client"
   pageSize={25}
   pageSizeOptions={[10, 25, 50, 100]}
@@ -128,6 +132,7 @@ function Example2_CustomPageSize() {
           columns={columns}
           rows={allEmployees}
           rowKey="id"
+          enablePagination={true}
           paginationMode="client"
           pageSize={25}
           pageSizeOptions={[10, 25, 50, 100]}
@@ -160,6 +165,7 @@ const [pageSize, setPageSize] = useState(15);
   columns={columns}
   rows={employees}
   rowKey="id"
+  enablePagination={true}
   paginationMode="client"
   page={page}
   pageSize={pageSize}
@@ -201,6 +207,7 @@ const [pageSize, setPageSize] = useState(15);
           columns={columns}
           rows={allEmployees}
           rowKey="id"
+          enablePagination={true}
           paginationMode="client"
           page={page}
           pageSize={pageSize}
@@ -243,6 +250,7 @@ useEffect(() => {
   columns={columns}
   rows={data}
   rowKey="id"
+  enablePagination={true}
   paginationMode="server"
   page={page}
   pageSize={pageSize}
@@ -274,6 +282,7 @@ useEffect(() => {
           <strong>Server Mode:</strong> When using server-side pagination, you must:
         </p>
         <ul className="text-sm space-y-1 ml-4 list-disc">
+          <li>Set <code className="px-1 bg-muted rounded">enablePagination=&#123;true&#125;</code> to enable pagination</li>
           <li>Set <code className="px-1 bg-muted rounded">paginationMode="server"</code></li>
           <li>Provide the <code className="px-1 bg-muted rounded">totalRows</code> prop with the total count from your backend</li>
           <li>Handle <code className="px-1 bg-muted rounded">onPageChange</code> and <code className="px-1 bg-muted rounded">onPageSizeChange</code> to fetch new data</li>

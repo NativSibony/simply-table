@@ -29,10 +29,16 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "prepublishOnly": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "dev:docs": "npm run update:pack && cd docs && npm run reset && npm run dev",
+    "update:pack": "rm -rf dist && rm -rf simply-table-*.tgz && npm run build && npm pack",
+    "reset": "rm -rf node_modules && rm -rf dist && rm -rf .vite && npm install"
   },
   "keywords": [
+    "data-grid",
+    "grid",
     "table",
+    "data-table",
     "react",
     "component",
     "ui"
@@ -67,6 +73,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "^7.2.2",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {

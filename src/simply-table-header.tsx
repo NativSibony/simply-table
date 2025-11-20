@@ -1,4 +1,4 @@
-import { Column, SortModel } from "./types";
+import { Column, SortModel, SortIconProps, ResizeHandleProps, DragIndicatorProps, TableClassNames } from "./types";
 import { useColumnResize } from "./hooks/use-column-resize";
 import { cn } from "@/lib/utils";
 
@@ -14,40 +14,49 @@ interface SimplyTableHeaderProps<T> {
   draggedColumn: string | null;
   dragOverColumn: string | null;
   className?: string;
+  sortIcon?: React.ComponentType<SortIconProps>;
+  resizeHandle?: React.ComponentType<ResizeHandleProps>;
+  dragIndicator?: React.ComponentType<DragIndicatorProps>;
+  sortIconClassName?: string;
+  resizeHandleClassName?: string;
+  defaultMinResizeWidth?: number;
+  defaultMaxResizeWidth?: number;
+  classNames?: TableClassNames<T>;
 }
 
-const ArrowUpDownIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
-    />
-  </svg>
-);
+const DefaultSortIcon = ({ direction }: SortIconProps) => {
+  if (direction === 'asc') {
+    return (
+      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+      </svg>
+    );
+  }
+  if (direction === 'desc') {
+    return (
+      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-4 h-4 shrink-0 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+      />
+    </svg>
+  );
+};
 
-const ArrowUpIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-  </svg>
-);
-
-const ArrowDownIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-  </svg>
-);
-
-const GripVerticalIcon = () => (
-  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <circle cx="9" cy="5" r="1" fill="currentColor" />
-    <circle cx="9" cy="12" r="1" fill="currentColor" />
-    <circle cx="9" cy="19" r="1" fill="currentColor" />
-    <circle cx="15" cy="5" r="1" fill="currentColor" />
-    <circle cx="15" cy="12" r="1" fill="currentColor" />
-    <circle cx="15" cy="19" r="1" fill="currentColor" />
-  </svg>
+const DefaultResizeHandle = ({ onMouseDown }: ResizeHandleProps) => (
+  <div
+    className="absolute right-1 top-1/2 -translate-y-1/2 w-0.5 h-3.5 dark:bg-[#babacd] bg-[#9595a0] hover:bg-primary rounded-full cursor-col-resize transition-colors opacity-0 group-hover:opacity-100"
+    onMouseDown={onMouseDown}
+    onClick={(e) => e.stopPropagation()}
+  />
 );
 
 function HeaderCell<T>({
@@ -61,6 +70,14 @@ function HeaderCell<T>({
   onDrop,
   onDragEnd,
   onResizeColumn,
+  SortIconComponent,
+  ResizeHandleComponent,
+  DragIndicatorComponent,
+  sortIconClassName,
+  resizeHandleClassName,
+  defaultMinResizeWidth,
+  defaultMaxResizeWidth,
+  classNames,
 }: {
   column: Column<T>;
   sort: SortModel | undefined;
@@ -72,10 +89,20 @@ function HeaderCell<T>({
   onDrop: (e: React.DragEvent, columnId: string) => void;
   onDragEnd: () => void;
   onResizeColumn: (columnId: string, newWidth: number) => void;
+  SortIconComponent: React.ComponentType<SortIconProps>;
+  ResizeHandleComponent: React.ComponentType<ResizeHandleProps>;
+  DragIndicatorComponent?: React.ComponentType<DragIndicatorProps>;
+  sortIconClassName?: string;
+  resizeHandleClassName?: string;
+  defaultMinResizeWidth?: number;
+  defaultMaxResizeWidth?: number;
+  classNames?: TableClassNames<T>;
 }) {
   const { onResizeStart, newWidth } = useColumnResize({
     column,
     onResize: (width) => onResizeColumn(column.id, width),
+    defaultMinWidth: defaultMinResizeWidth,
+    defaultMaxWidth: defaultMaxResizeWidth,
   });
 
   return (
@@ -83,7 +110,10 @@ function HeaderCell<T>({
       className={cn(
         "flex items-center gap-2 px-4 py-3 font-medium text-sm border-r last:border-r-0 relative group overflow-hidden",
         isDragging && "opacity-50",
-        isDragOver && "bg-accent"
+        isDragOver && "bg-accent",
+        classNames?.headerCell,
+        isDragging && classNames?.headerCellDragging,
+        isDragOver && classNames?.headerCellDragOver
       )}
       style={{
         width: `${newWidth}px`,
@@ -98,29 +128,25 @@ function HeaderCell<T>({
       onDrop={(e) => onDrop(e, column.id)}
       onDragEnd={onDragEnd}
     >
-      <GripVerticalIcon />
+      {DragIndicatorComponent && <DragIndicatorComponent isDragging={isDragging} />}
 
       <div className="flex-1 truncate min-w-0" title={typeof column.header === "string" ? column.header : undefined}>
         {typeof column.header === "function" ? column.header(column) : column.header}
       </div>
 
-      {column.sortable !== false && (
+      {!!column.sortable && (
         <button
           onClick={() => onSort(column.field as string)}
-          className="hover:bg-accent rounded p-1 transition-colors flex-shrink-0"
+          className={cn("hover:bg-accent rounded p-1 transition-colors shrink-0", sortIconClassName, classNames?.sortIcon)}
         >
-          {!sort && <ArrowUpDownIcon />}
-          {sort?.sort === "asc" && <ArrowUpIcon />}
-          {sort?.sort === "desc" && <ArrowDownIcon />}
+          <SortIconComponent direction={sort?.sort || null} />
         </button>
       )}
 
-      {column.resizable !== false && (
-        <div
-          className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary transition-colors"
-          onMouseDown={onResizeStart}
-          onClick={(e) => e.stopPropagation()}
-        />
+      {!!column.resizable && (
+        <div className={cn('opacity-0 group-hover:opacity-100 transition-all duration-300', resizeHandleClassName, classNames?.resizeHandle)}>
+          <ResizeHandleComponent onMouseDown={onResizeStart} />
+        </div>
       )}
     </div>
   );
@@ -138,9 +164,17 @@ export function SimplyTableHeader<T>({
   draggedColumn,
   dragOverColumn,
   className,
+  sortIcon: SortIconComponent = DefaultSortIcon,
+  resizeHandle: ResizeHandleComponent = DefaultResizeHandle,
+  dragIndicator: DragIndicatorComponent,
+  sortIconClassName,
+  resizeHandleClassName,
+  defaultMinResizeWidth,
+  defaultMaxResizeWidth,
+  classNames,
 }: SimplyTableHeaderProps<T>) {
   return (
-    <div className={cn("flex border-b bg-muted/50 sticky top-0 z-10 backdrop-blur-sm", className)}>
+    <div className={cn("flex border-b bg-muted/50 sticky top-0 z-10 backdrop-blur-sm", className, classNames?.header)}>
       {columns.map((column) => {
         const sort = sortModel.find((s) => s.field === column.field);
         const isDragging = draggedColumn === column.id;
@@ -159,6 +193,14 @@ export function SimplyTableHeader<T>({
             onDrop={onDrop}
             onDragEnd={onDragEnd}
             onResizeColumn={onResizeColumn}
+            SortIconComponent={SortIconComponent}
+            ResizeHandleComponent={ResizeHandleComponent}
+            DragIndicatorComponent={DragIndicatorComponent}
+            sortIconClassName={sortIconClassName}
+            resizeHandleClassName={resizeHandleClassName}
+            defaultMinResizeWidth={defaultMinResizeWidth}
+            defaultMaxResizeWidth={defaultMaxResizeWidth}
+            classNames={classNames}
           />
         );
       })}

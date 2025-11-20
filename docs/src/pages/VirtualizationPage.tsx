@@ -116,7 +116,7 @@ function Example2_WithVirtualization() {
 />`;
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 overflow-auto">
       <div>
         <h2 className="text-2xl font-bold mb-2">2. With Virtualization</h2>
         <p className="text-muted-foreground">
@@ -124,7 +124,7 @@ function Example2_WithVirtualization() {
         </p>
       </div>
 
-      <div className="border rounded-lg p-6 bg-card">
+      <div className="border rounded-lg p-6 bg-card max-h-[600px] overflow-auto">
         <SimplyTable
           columns={columns}
           rows={largeDataset}

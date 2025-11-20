@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface SimplyTablePaginationProps {
   page: number;
@@ -10,7 +11,10 @@ interface SimplyTablePaginationProps {
   pageSizeOptions?: number[];
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
+  className?: string;
 }
+
+export type { SimplyTablePaginationProps };
 
 export function SimplyTablePagination({
   page,
@@ -20,12 +24,13 @@ export function SimplyTablePagination({
   pageSizeOptions = [10, 25, 50, 100],
   onPageChange,
   onPageSizeChange,
+  className,
 }: SimplyTablePaginationProps) {
   const startRow = page * pageSize + 1;
   const endRow = Math.min((page + 1) * pageSize, totalRows);
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t bg-background">
+    <div className={cn("flex items-center justify-between px-4 py-3 border-t bg-background", className)}>
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span>Rows per page:</span>
         <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
