@@ -30,11 +30,11 @@ export function SimplyTablePagination({
   const endRow = Math.min((page + 1) * pageSize, totalRows);
 
   return (
-    <div className={cn("flex items-center justify-between px-4 py-3 border-t bg-background", className)}>
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+    <div className={cn("st-flex st-items-center st-justify-between st-px-4 st-py-3 st-border-t st-bg-background", className)}>
+      <div className="st-flex st-items-center st-gap-2 st-text-sm st-text-muted-foreground">
         <span>Rows per page:</span>
         <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
-          <SelectTrigger className="h-8 w-16">
+          <SelectTrigger className="st-h-8 st-w-16">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -47,50 +47,50 @@ export function SimplyTablePagination({
         </Select>
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-muted-foreground">
+      <div className="st-flex st-items-center st-gap-2">
+        <span className="st-text-sm st-text-muted-foreground">
           {startRow}-{endRow} of {totalRows}
         </span>
 
-        <div className="flex items-center gap-1">
+        <div className="st-flex st-items-center st-gap-1">
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8"
+            className="st-h-8 st-w-8"
             onClick={() => onPageChange(0)}
             disabled={page === 0}
           >
-            <ChevronsLeft className="h-4 w-4" />
+            <ChevronsLeft className="st-h-4 st-w-4" />
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8"
+            className="st-h-8 st-w-8"
             onClick={() => onPageChange(page - 1)}
             disabled={page === 0}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="st-h-4 st-w-4" />
           </Button>
-          <span className="text-sm px-2">
+          <span className="st-text-sm st-px-2">
             Page {page + 1} of {totalPages}
           </span>
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8"
+            className="st-h-8 st-w-8"
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages - 1}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="st-h-4 st-w-4" />
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8"
+            className="st-h-8 st-w-8"
             onClick={() => onPageChange(totalPages - 1)}
             disabled={page >= totalPages - 1}
           >
-            <ChevronsRight className="h-4 w-4" />
+            <ChevronsRight className="st-h-4 st-w-4" />
           </Button>
         </div>
       </div>

@@ -27,8 +27,8 @@ export function SimplyTableRow<T>({
   return (
     <div
       className={cn(
-        "flex border-b last:border-b-0 hover:bg-muted/50 transition-colors",
-        isEven && "bg-muted/20",
+        "st-flex st-border-b last:st-border-b-0 hover:st-bg-muted/50 st-transition-colors",
+        isEven && "st-bg-muted/20",
         rowClass,
         classNames?.row && (typeof classNames.row === 'function' ? classNames.row(row, rowIndex) : classNames.row),
         isEven ? classNames?.rowEven : classNames?.rowOdd
@@ -52,7 +52,7 @@ export function SimplyTableRow<T>({
           <div
             key={column.id}
             className={cn(
-              "px-4 py-3 border-r last:border-r-0 text-sm flex items-center overflow-hidden min-w-0",
+              "st-px-4 st-py-3 st-border-r last:st-border-r-0 st-text-sm st-flex st-items-center st-overflow-hidden st-min-w-0",
               cellClass,
               classNames?.cell && (typeof classNames.cell === 'function' ? classNames.cell(params) : classNames.cell)
             )}
@@ -67,7 +67,7 @@ export function SimplyTableRow<T>({
             {column.cellRenderer ? (
               column.cellRenderer(params)
             ) : (
-              <span className="truncate">{String(value || "")}</span>
+              <span className="st-truncate">{String(value || "")}</span>
             )}
           </div>
         );

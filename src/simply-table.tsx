@@ -158,14 +158,14 @@ export function SimplyTable<T = any>({
     : displayData.map((row, index) => ({ row, index }));
 
   return (
-    <div className={cn("flex flex-col border rounded-lg bg-card", className, classNames?.root)}>
+    <div className={cn("st-flex st-flex-col st-border st-rounded-lg st-bg-card", className, classNames?.root)}>
       {/* Header - sticky, outside scroll container */}
       <div
         ref={headerScrollRef}
-        className="overflow-x-auto overflow-y-hidden"
+        className="st-overflow-x-auto st-overflow-y-hidden"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        <div className="min-w-max">
+        <div className="st-min-w-max">
         <SimplyTableHeader
           columns={reorderedColumns}
           sortModel={sortModel}
@@ -192,20 +192,20 @@ export function SimplyTable<T = any>({
 
       {/* Body - scrollable container */}
       <div
-        className={cn("flex-1 overflow-auto", classNames?.container)}
+        className={cn("st-flex-1 st-overflow-auto", classNames?.container)}
         ref={enableVirtualization ? scrollRef : bodyScrollRef}
         onScroll={handleBodyScroll}
       >
-        <div className="min-w-max">
-          <div ref={containerRef} className={cn("relative min-h-0", classNames?.body)}>
+        <div className="st-min-w-max">
+          <div ref={containerRef} className={cn("st-relative st-min-h-0", classNames?.body)}>
             {loading && (
-              <div className={cn("absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm z-20", classNames?.loadingOverlay)}>
-                <div className={cn("w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin", classNames?.loadingSpinner)} />
+              <div className={cn("st-absolute st-inset-0 st-flex st-items-center st-justify-center st-bg-background/50 st-backdrop-blur-sm st-z-20", classNames?.loadingOverlay)}>
+                <div className={cn("st-w-8 st-h-8 st-border-4 st-border-primary st-border-t-transparent st-rounded-full st-animate-spin", classNames?.loadingSpinner)} />
               </div>
             )}
 
             {!loading && displayData.length === 0 && (
-              <div className={cn("flex items-center justify-center py-12 text-muted-foreground", classNames?.emptyState)}>
+              <div className={cn("st-flex st-items-center st-justify-center st-py-12 st-text-muted-foreground", classNames?.emptyState)}>
                 {noRowsOverlay || "No rows to display"}
               </div>
             )}

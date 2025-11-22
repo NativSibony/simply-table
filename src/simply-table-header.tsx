@@ -27,20 +27,20 @@ interface SimplyTableHeaderProps<T> {
 const DefaultSortIcon = ({ direction }: SortIconProps) => {
   if (direction === 'asc') {
     return (
-      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="st-w-4 st-h-4 st-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
       </svg>
     );
   }
   if (direction === 'desc') {
     return (
-      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="st-w-4 st-h-4 st-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
       </svg>
     );
   }
   return (
-    <svg className="w-4 h-4 shrink-0 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg className="st-w-4 st-h-4 st-shrink-0 st-opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -53,7 +53,7 @@ const DefaultSortIcon = ({ direction }: SortIconProps) => {
 
 const DefaultResizeHandle = ({ onMouseDown }: ResizeHandleProps) => (
   <div
-    className="absolute right-1 top-1/2 -translate-y-1/2 w-0.5 h-3.5 dark:bg-[#babacd] bg-[#9595a0] hover:bg-primary rounded-full cursor-col-resize transition-colors opacity-0 group-hover:opacity-100"
+    className="st-absolute st-right-1 st-top-1/2 st--translate-y-1/2 st-w-0.5 st-h-3.5 dark:st-bg-[#babacd] st-bg-[#9595a0] hover:st-bg-primary st-rounded-full st-cursor-col-resize st-transition-colors st-opacity-0 group-hover:st-opacity-100"
     onMouseDown={onMouseDown}
     onClick={(e) => e.stopPropagation()}
   />
@@ -108,9 +108,9 @@ function HeaderCell<T>({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 px-4 py-3 font-medium text-sm border-r last:border-r-0 relative group overflow-hidden",
-        isDragging && "opacity-50",
-        isDragOver && "bg-accent",
+        "st-flex st-items-center st-gap-2 st-px-4 st-py-3 st-font-medium st-text-sm st-border-r last:st-border-r-0 st-relative st-group st-overflow-hidden",
+        isDragging && "st-opacity-50",
+        isDragOver && "st-bg-accent",
         classNames?.headerCell,
         isDragging && classNames?.headerCellDragging,
         isDragOver && classNames?.headerCellDragOver
@@ -130,21 +130,21 @@ function HeaderCell<T>({
     >
       {DragIndicatorComponent && <DragIndicatorComponent isDragging={isDragging} />}
 
-      <div className="flex-1 truncate min-w-0" title={typeof column.header === "string" ? column.header : undefined}>
+      <div className="st-flex-1 st-truncate st-min-w-0" title={typeof column.header === "string" ? column.header : undefined}>
         {typeof column.header === "function" ? column.header(column) : column.header}
       </div>
 
       {!!column.sortable && (
         <button
           onClick={() => onSort(column.field as string)}
-          className={cn("hover:bg-accent rounded p-1 transition-colors shrink-0", sortIconClassName, classNames?.sortIcon)}
+          className={cn("hover:st-bg-accent st-rounded st-p-1 st-transition-colors st-shrink-0", sortIconClassName, classNames?.sortIcon)}
         >
           <SortIconComponent direction={sort?.sort || null} />
         </button>
       )}
 
       {!!column.resizable && (
-        <div className={cn('opacity-0 group-hover:opacity-100 transition-all duration-300', resizeHandleClassName, classNames?.resizeHandle)}>
+        <div className={cn('st-opacity-0 group-hover:st-opacity-100 st-transition-all st-duration-300', resizeHandleClassName, classNames?.resizeHandle)}>
           <ResizeHandleComponent onMouseDown={onResizeStart} />
         </div>
       )}
@@ -174,7 +174,7 @@ export function SimplyTableHeader<T>({
   classNames,
 }: SimplyTableHeaderProps<T>) {
   return (
-    <div className={cn("flex border-b bg-muted/50 sticky top-0 z-10 backdrop-blur-sm", className, classNames?.header)}>
+    <div className={cn("st-flex st-border-b st-bg-muted/50 st-sticky st-top-0 st-z-10 st-backdrop-blur-sm", className, classNames?.header)}>
       {columns.map((column) => {
         const sort = sortModel.find((s) => s.field === column.field);
         const isDragging = draggedColumn === column.id;
