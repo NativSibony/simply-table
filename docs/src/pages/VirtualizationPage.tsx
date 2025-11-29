@@ -71,7 +71,7 @@ export function VirtualizationPage() {
           <a href="/pagination" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
             Pagination →
           </a>
-          <a href="/sorting-filtering" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
+          <a href="/filtering" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">
             Sorting & Filtering
           </a>
           <a href="/advanced" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">

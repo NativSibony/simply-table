@@ -52,7 +52,7 @@ function App() {
             simply-table
           </h1>
           <div className="inline-block text-xs px-3 py-1 bg-primary/10 self-end text-primary rounded-full mb-2 font-medium">
-            v0.1.5
+            v0.1.6
           </div>
         </div>
 
@@ -195,7 +195,7 @@ function App() {
             icon="📋"
           />
           <ExampleLink
-            to="/sorting-filtering"
+            to="/filtering"
             title="Sorting & Filtering"
             description="Implement sorting and filtering functionality"
             icon="🔍"

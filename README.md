@@ -464,10 +464,6 @@ Documentation is available in the [`docs/`](docs/) directory. This directory is 
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
-
-MIT © [Your Name]
-
 ## Links
 
 - [GitHub Repository](https://github.com/NativSibony/simply-table)

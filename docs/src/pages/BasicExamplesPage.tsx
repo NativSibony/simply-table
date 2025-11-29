@@ -50,7 +50,7 @@ export function BasicExamplesPage() {
           Now that you understand the basics, explore more advanced features:
         </p>
         <div className="flex flex-wrap gap-3">
-          <a href="/sorting-filtering" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
+          <a href="/filtering" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
             Sorting & Filtering →
           </a>
           <a href="/pagination" className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors">

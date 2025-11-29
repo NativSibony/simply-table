@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "reset:dev": "npm run reset && npm run dev",
     "reset": "rm -rf node_modules && rm -rf package-lock.json && rm -rf .vite && npm install"
   },
   "dependencies": {
