@@ -213,13 +213,14 @@ function Example3_CustomRowHeight() {
   ];
 
   const code = `// Custom row height and overscan
+// IMPORTANT: rowHeight must match actual rendered row height
 <SimplyTable
   columns={columns}
   rows={rows}
   rowKey="id"
   enableVirtualization={true}
-  rowHeight={64}        // Taller rows
-  overscanCount={10}    // More rows buffered
+  rowHeight={48}        // Must match actual row height (default padding)
+  overscanCount={10}    // More rows buffered for smoother scrolling
   className="h-[600px]" // Required: Fixed height
 />`;
 
@@ -239,7 +240,7 @@ function Example3_CustomRowHeight() {
           rows={largeDataset.slice(0, 1000)}
           rowKey="id"
           enableVirtualization={true}
-          rowHeight={64}
+          rowHeight={48}
           overscanCount={10}
           className="h-[600px]"
         />
@@ -256,10 +257,19 @@ function Example3_CustomRowHeight() {
         </p>
         <ul className="text-sm space-y-1 ml-4 list-disc">
           <li><code className="px-1 bg-muted rounded">className</code>: Must include a fixed height (e.g., "h-[600px]") for virtualization to work</li>
-          <li><code className="px-1 bg-muted rounded">rowHeight</code>: Height of each row in pixels (default: 48)</li>
+          <li><code className="px-1 bg-muted rounded">rowHeight</code>: Height of each row in pixels (default: 48) - <strong>must match actual rendered height</strong></li>
           <li><code className="px-1 bg-muted rounded">overscanCount</code>: Number of rows to render outside viewport (default: 5)</li>
           <li>Higher overscan = smoother scrolling but more DOM nodes</li>
         </ul>
+      </div>
+
+      <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border-l-4 border-yellow-500 rounded-r-lg mt-4">
+        <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2">⚠️ Common Issue: Blank Space at Bottom</h4>
+        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          If you see blank space when scrolling to the bottom, it means your <code className="px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-900 rounded">rowHeight</code> prop
+          doesn't match the actual rendered row height. The default row height with standard padding is 48px. If you customize row styling,
+          ensure the <code className="px-1.5 py-0.5 bg-yellow-100 dark:bg-yellow-900 rounded">rowHeight</code> prop matches exactly.
+        </p>
       </div>
     </section>
   );

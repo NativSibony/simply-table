@@ -8,6 +8,7 @@ import { VirtualizationPage } from './pages/VirtualizationPage';
 import { CustomRenderingPage } from './pages/CustomRenderingPage';
 import { AdvancedFeaturesPage } from './pages/AdvancedFeaturesPage';
 import { ApiReferencePage } from './pages/ApiReferencePage';
+import { ThemeBuilderPage } from './pages/ThemeBuilderPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/virtualization" element={<VirtualizationPage />} />
           <Route path="/custom-rendering" element={<CustomRenderingPage />} />
           <Route path="/advanced" element={<AdvancedFeaturesPage />} />
+          <Route path="/theme-builder" element={<ThemeBuilderPage />} />
           <Route path="/api-reference" element={<ApiReferencePage />} />
         </Routes>
       </Layout>

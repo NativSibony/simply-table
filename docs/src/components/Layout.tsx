@@ -16,6 +16,7 @@ const navigation = [
   { name: 'Virtualization', path: '/virtualization', section: 'Examples' },
   { name: 'Custom Rendering', path: '/custom-rendering', section: 'Examples' },
   { name: 'Advanced Features', path: '/advanced', section: 'Examples' },
+  { name: 'Theme Builder', path: '/theme-builder', section: 'Customization' },
   { name: 'API Reference', path: '/api-reference', section: 'Reference' },
 ];
 
@@ -98,6 +99,32 @@ export function Layout({ children }: LayoutProps) {
                 <div className="space-y-1">
                   {navigation
                     .filter((item) => item.section === 'Examples')
+                    .map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setSidebarOpen(false)}
+                        className={cn(
+                          'flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                          location.pathname === item.path
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                </div>
+              </div>
+
+              {/* Customization Section */}
+              <div>
+                <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Customization
+                </h3>
+                <div className="space-y-1">
+                  {navigation
+                    .filter((item) => item.section === 'Customization')
                     .map((item) => (
                       <Link
                         key={item.path}

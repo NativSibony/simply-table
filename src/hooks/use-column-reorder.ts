@@ -1,10 +1,15 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Column } from "../types";
 
 export function useColumnReorder<T>(initialColumns: Column<T>[], onColumnReorder?: (columns: Column<T>[]) => void) {
   const [columns, setColumns] = useState(initialColumns);
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+
+  // Sync with incoming columns (e.g., when widths change)
+  useEffect(() => {
+    setColumns(initialColumns);
+  }, [initialColumns]);
 
   const handleDragStart = useCallback((e: React.DragEvent, columnId: string) => {
     setDraggedColumn(columnId);

@@ -1,5 +1,6 @@
 import { Column, CellRendererParams, TableClassNames } from "./types";
 import { cn } from "@/lib/utils";
+import styles from "./styles/table.module.css";
 
 interface SimplyTableRowProps<T> {
   row: T;
@@ -27,8 +28,8 @@ export function SimplyTableRow<T>({
   return (
     <div
       className={cn(
-        "st-flex st-border-b last:st-border-b-0 hover:st-bg-muted/50 st-transition-colors",
-        isEven && "st-bg-muted/20",
+        styles.row,
+        isEven && styles.rowEven,
         rowClass,
         classNames?.row && (typeof classNames.row === 'function' ? classNames.row(row, rowIndex) : classNames.row),
         isEven ? classNames?.rowEven : classNames?.rowOdd
@@ -52,7 +53,7 @@ export function SimplyTableRow<T>({
           <div
             key={column.id}
             className={cn(
-              "st-px-4 st-py-3 st-border-r last:st-border-r-0 st-text-sm st-flex st-items-center st-overflow-hidden st-min-w-0",
+              styles.cell,
               cellClass,
               classNames?.cell && (typeof classNames.cell === 'function' ? classNames.cell(params) : classNames.cell)
             )}
@@ -67,7 +68,7 @@ export function SimplyTableRow<T>({
             {column.cellRenderer ? (
               column.cellRenderer(params)
             ) : (
-              <span className="st-truncate">{String(value || "")}</span>
+              <span className={styles.cellContent}>{String(value || "")}</span>
             )}
           </div>
         );

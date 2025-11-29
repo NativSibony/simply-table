@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { SimplyTableProps } from "./types";
 import { SimplyTableHeader } from "./simply-table-header";
 import { SimplyTableRow } from "./simply-table-row";
@@ -9,6 +9,7 @@ import { useFiltering } from "./hooks/use-filtering";
 import { usePagination } from "./hooks/use-pagination";
 import { useVirtualization } from "./hooks/use-virtualization";
 import { cn } from "@/lib/utils";
+import styles from "./styles/table.module.css";
 
 export function SimplyTable<T = any>({
   columns: initialColumns,
@@ -54,7 +55,10 @@ export function SimplyTable<T = any>({
   const containerRef = useRef<HTMLDivElement>(null);
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [containerHeight] = useState(600);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const isScrollingSyncRef = useRef(false);
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => {
     const widths: Record<string, number> = {};
     initialColumns.forEach((col) => {
@@ -63,12 +67,45 @@ export function SimplyTable<T = any>({
     return widths;
   });
 
+  // Update container width on mount and resize
+  useEffect(() => {
+    const updateContainerWidth = () => {
+      if (rootRef.current) {
+        setContainerWidth(rootRef.current.offsetWidth);
+      }
+    };
+
+    updateContainerWidth();
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateContainerWidth();
+    });
+
+    if (rootRef.current) {
+      resizeObserver.observe(rootRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
   const columns = useMemo(() => {
     return initialColumns.map((col) => ({
       ...col,
       width: columnWidths[col.id] || col.width || 150,
     }));
   }, [initialColumns, columnWidths]);
+
+  // Calculate total width for scroll detection
+  const totalColumnsWidth = useMemo(() => {
+    return columns.reduce((sum, col) => sum + (col.width || 150), 0);
+  }, [columns]);
+
+  const needsHorizontalScroll = useMemo(() => {
+    if (containerWidth === 0) return false;
+    return totalColumnsWidth > containerWidth;
+  }, [totalColumnsWidth, containerWidth]);
 
   // Column reorder
   const {
@@ -123,12 +160,33 @@ export function SimplyTable<T = any>({
 
   // Sync horizontal scroll between header and body
   const handleBodyScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (isScrollingSyncRef.current) return;
+    
     if (enableVirtualization) {
       handleScroll(e);
     }
+    
     // Sync horizontal scroll to header
     if (headerScrollRef.current) {
+      isScrollingSyncRef.current = true;
       headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft;
+      requestAnimationFrame(() => {
+        isScrollingSyncRef.current = false;
+      });
+    }
+  };
+
+  const handleHeaderScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (isScrollingSyncRef.current) return;
+    
+    // Sync horizontal scroll to body
+    const bodyRef = enableVirtualization ? scrollRef.current : bodyScrollRef.current;
+    if (bodyRef) {
+      isScrollingSyncRef.current = true;
+      bodyRef.scrollLeft = e.currentTarget.scrollLeft;
+      requestAnimationFrame(() => {
+        isScrollingSyncRef.current = false;
+      });
     }
   };
 
@@ -158,14 +216,19 @@ export function SimplyTable<T = any>({
     : displayData.map((row, index) => ({ row, index }));
 
   return (
-    <div className={cn("st-flex st-flex-col st-border st-rounded-lg st-bg-card", className, classNames?.root)}>
+    <div ref={rootRef} className={cn(styles.root, className, classNames?.root)}>
       {/* Header - sticky, outside scroll container */}
       <div
         ref={headerScrollRef}
-        className="st-overflow-x-auto st-overflow-y-hidden"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        onScroll={handleHeaderScroll}
+        style={{
+          overflowX: needsHorizontalScroll ? 'auto' : 'hidden',
+          overflowY: 'hidden',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
       >
-        <div className="st-min-w-max">
+        <div style={{ minWidth: needsHorizontalScroll ? 'max-content' : '100%' }}>
         <SimplyTableHeader
           columns={reorderedColumns}
           sortModel={sortModel}
@@ -192,20 +255,25 @@ export function SimplyTable<T = any>({
 
       {/* Body - scrollable container */}
       <div
-        className={cn("st-flex-1 st-overflow-auto", classNames?.container)}
+        className={cn(styles.container, classNames?.container)}
         ref={enableVirtualization ? scrollRef : bodyScrollRef}
         onScroll={handleBodyScroll}
+        style={{
+          flex: 1,
+          overflowX: needsHorizontalScroll ? 'auto' : 'hidden',
+          overflowY: 'auto'
+        }}
       >
-        <div className="st-min-w-max">
-          <div ref={containerRef} className={cn("st-relative st-min-h-0", classNames?.body)}>
+        <div style={{ minWidth: needsHorizontalScroll ? 'max-content' : '100%' }}>
+          <div ref={containerRef} className={cn(styles.body, classNames?.body)}>
             {loading && (
-              <div className={cn("st-absolute st-inset-0 st-flex st-items-center st-justify-center st-bg-background/50 st-backdrop-blur-sm st-z-20", classNames?.loadingOverlay)}>
-                <div className={cn("st-w-8 st-h-8 st-border-4 st-border-primary st-border-t-transparent st-rounded-full st-animate-spin", classNames?.loadingSpinner)} />
+              <div className={cn(styles.loadingOverlay, classNames?.loadingOverlay)}>
+                <div className={cn(styles.loadingSpinner, classNames?.loadingSpinner)} />
               </div>
             )}
 
             {!loading && displayData.length === 0 && (
-              <div className={cn("st-flex st-items-center st-justify-center st-py-12 st-text-muted-foreground", classNames?.emptyState)}>
+              <div className={cn(styles.emptyState, classNames?.emptyState)}>
                 {noRowsOverlay || "No rows to display"}
               </div>
             )}

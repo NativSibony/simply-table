@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
-import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import dts from "vite-plugin-dts";
 import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
@@ -10,7 +9,6 @@ import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss(),
     cssInjectedByJsPlugin(),
     dts({
       include: ["src/**/*"],
@@ -29,6 +27,12 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  css: {
+    modules: {
+      localsConvention: 'camelCase',
+      generateScopedName: 'st-[name]__[local]___[hash:base64:5]',
     },
   },
   build: {

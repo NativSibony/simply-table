@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import styles from "./styles/table.module.css";
 
 interface SimplyTablePaginationProps {
   page: number;
@@ -30,11 +31,11 @@ export function SimplyTablePagination({
   const endRow = Math.min((page + 1) * pageSize, totalRows);
 
   return (
-    <div className={cn("st-flex st-items-center st-justify-between st-px-4 st-py-3 st-border-t st-bg-background", className)}>
-      <div className="st-flex st-items-center st-gap-2 st-text-sm st-text-muted-foreground">
+    <div className={cn(styles.pagination, className)}>
+      <div className={styles.paginationInfo}>
         <span>Rows per page:</span>
         <Select value={String(pageSize)} onValueChange={(value) => onPageSizeChange(Number(value))}>
-          <SelectTrigger className="st-h-8 st-w-16">
+          <SelectTrigger style={{ height: '2rem', width: '4rem' }}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -47,50 +48,50 @@ export function SimplyTablePagination({
         </Select>
       </div>
 
-      <div className="st-flex st-items-center st-gap-2">
-        <span className="st-text-sm st-text-muted-foreground">
+      <div className={styles.paginationControls}>
+        <span className={styles.paginationText}>
           {startRow}-{endRow} of {totalRows}
         </span>
 
-        <div className="st-flex st-items-center st-gap-1">
+        <div className={styles.paginationButtons}>
           <Button
             variant="outline"
             size="icon"
-            className="st-h-8 st-w-8"
+            style={{ height: '2rem', width: '2rem' }}
             onClick={() => onPageChange(0)}
             disabled={page === 0}
           >
-            <ChevronsLeft className="st-h-4 st-w-4" />
+            <ChevronsLeft style={{ height: '1rem', width: '1rem' }} />
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="st-h-8 st-w-8"
+            style={{ height: '2rem', width: '2rem' }}
             onClick={() => onPageChange(page - 1)}
             disabled={page === 0}
           >
-            <ChevronLeft className="st-h-4 st-w-4" />
+            <ChevronLeft style={{ height: '1rem', width: '1rem' }} />
           </Button>
-          <span className="st-text-sm st-px-2">
+          <span style={{ fontSize: '0.875rem', padding: '0 0.5rem' }}>
             Page {page + 1} of {totalPages}
           </span>
           <Button
             variant="outline"
             size="icon"
-            className="st-h-8 st-w-8"
+            style={{ height: '2rem', width: '2rem' }}
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages - 1}
           >
-            <ChevronRight className="st-h-4 st-w-4" />
+            <ChevronRight style={{ height: '1rem', width: '1rem' }} />
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="st-h-8 st-w-8"
+            style={{ height: '2rem', width: '2rem' }}
             onClick={() => onPageChange(totalPages - 1)}
             disabled={page >= totalPages - 1}
           >
-            <ChevronsRight className="st-h-4 st-w-4" />
+            <ChevronsRight style={{ height: '1rem', width: '1rem' }} />
           </Button>
         </div>
       </div>

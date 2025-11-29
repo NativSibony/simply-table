@@ -1,0 +1,45 @@
+/* CSS Variables for theming */
+:root {
+  --st-radius: 0.625rem;
+  --st-background: 0 0% 100%;
+  --st-foreground: 0 0% 14.5%;
+  --st-card: 0 0% 100%;
+  --st-card-foreground: 0 0% 14.5%;
+  --st-popover: 0 0% 100%;
+  --st-popover-foreground: 0 0% 14.5%;
+  --st-primary: 0 0% 20.5%;
+  --st-primary-foreground: 0 0% 98.5%;
+  --st-secondary: 0 0% 97%;
+  --st-secondary-foreground: 0 0% 20.5%;
+  --st-muted: 0 0% 97%;
+  --st-muted-foreground: 0 0% 55.6%;
+  --st-accent: 0 0% 97%;
+  --st-accent-foreground: 0 0% 20.5%;
+  --st-destructive: 0 84.2% 60.2%;
+  --st-destructive-foreground: 0 0% 98%;
+  --st-border: 0 0% 92.2%;
+  --st-input: 0 0% 92.2%;
+  --st-ring: 0 0% 70.8%;
+}
+
+.dark {
+  --st-background: 0 0% 14.5%;
+  --st-foreground: 0 0% 98.5%;
+  --st-card: 0 0% 20.5%;
+  --st-card-foreground: 0 0% 98.5%;
+  --st-popover: 0 0% 20.5%;
+  --st-popover-foreground: 0 0% 98.5%;
+  --st-primary: 0 0% 92.2%;
+  --st-primary-foreground: 0 0% 20.5%;
+  --st-secondary: 0 0% 26.9%;
+  --st-secondary-foreground: 0 0% 98.5%;
+  --st-muted: 0 0% 26.9%;
+  --st-muted-foreground: 0 0% 70.8%;
+  --st-accent: 0 0% 26.9%;
+  --st-accent-foreground: 0 0% 98.5%;
+  --st-destructive: 0 62.8% 30.6%;
+  --st-destructive-foreground: 0 0% 98%;
+  --st-border: 0 0% 26.9%;
+  --st-input: 0 0% 26.9%;
+  --st-ring: 0 0% 55.6%;
+}

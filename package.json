@@ -31,7 +31,7 @@
     "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 0",
     "dev:docs": "npm run update:pack && cd docs && npm run reset && npm run dev",
-    "update:pack": "rm -rf dist && rm -rf simply-table-*.tgz && npm run build && npm pack",
+    "update:pack": "rm -rf dist && rm -rf package/*.tgz && npm run build && FILE=$(npm pack --pack-destination package/) && mv package/$FILE package/simply-table.tgz",
     "reset": "rm -rf node_modules && rm -rf dist && rm -rf .vite && npm install"
   },
   "keywords": [
@@ -78,11 +78,8 @@
   "dependencies": {
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
-    "@tailwindcss/vite": "^4.1.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.554.0",
-    "tailwind-merge": "^3.4.0",
-    "tailwindcss": "^4.1.17"
+    "lucide-react": "^0.554.0"
   }
 }

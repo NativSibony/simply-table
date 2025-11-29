@@ -1,0 +1,84 @@
+/* Button Base Styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--st-radius) - 2px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  white-space: nowrap;
+}
+
+.button:focus-visible {
+  outline: 2px solid hsl(var(--st-ring));
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Button Variants */
+.buttonDefault {
+  background-color: hsl(var(--st-primary));
+  color: hsl(var(--st-primary-foreground));
+}
+
+.buttonDefault:hover {
+  background-color: hsl(var(--st-primary) / 0.9);
+}
+
+.buttonOutline {
+  border: 1px solid hsl(var(--st-input));
+  background-color: hsl(var(--st-background));
+  color: hsl(var(--st-foreground));
+}
+
+.buttonOutline:hover {
+  background-color: hsl(var(--st-accent));
+  color: hsl(var(--st-accent-foreground));
+}
+
+.buttonGhost {
+  background-color: transparent;
+  color: hsl(var(--st-foreground));
+}
+
+.buttonGhost:hover {
+  background-color: hsl(var(--st-accent));
+  color: hsl(var(--st-accent-foreground));
+}
+
+/* Button Sizes */
+.buttonSm {
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  font-size: 0.75rem;
+}
+
+.buttonMd {
+  height: 2.5rem;
+  padding: 0 1rem;
+}
+
+.buttonLg {
+  height: 2.75rem;
+  padding: 0 2rem;
+}
+
+.buttonIcon {
+  height: 2.5rem;
+  width: 2.5rem;
+  padding: 0;
+}
+
+.buttonIconSm {
+  height: 2rem;
+  width: 2rem;
+  padding: 0;
+}
