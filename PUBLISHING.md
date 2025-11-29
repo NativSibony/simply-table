@@ -8,6 +8,89 @@ This document explains how to publish the simply-table library to npm.
 2. **npm Login**: Run `npm login` to authenticate
 3. **Repository Access**: Ensure you have write access to the GitHub repository
 
+## Automated Publishing (Recommended)
+
+The project includes a production-ready release script that handles everything automatically.
+
+### Quick Start
+
+```bash
+# Patch release (0.1.6 → 0.1.7)
+npm run release:patch
+
+# Minor release (0.1.6 → 0.2.0)
+npm run release:minor
+
+# Major release (0.1.6 → 1.0.0)
+npm run release:major
+```
+
+### What the Script Does
+
+The release script (`scripts/release.sh`) automatically:
+
+1. ✅ **Pre-flight Checks**
+   - Verifies git status is clean
+   - Checks you're on the main branch
+   - Confirms npm authentication
+   - Validates dependencies are installed
+
+2. ✅ **Build & Test**
+   - Runs linter
+   - Runs tests
+   - Builds the library
+
+3. ✅ **Version Management**
+   - Updates version in `package.json`
+   - Updates version in documentation (`docs/src/pages/HomePage.tsx`)
+   - Creates conventional commit message
+
+4. ✅ **Git Operations**
+   - Commits all changes
+   - Creates git tag (e.g., `v0.1.7`)
+   - Pushes to remote with tags
+
+5. ✅ **Publishing**
+   - Publishes to npm with public access
+
+### Features
+
+- 🎨 **Colored output** for better readability
+- ⚠️ **Confirmation prompts** before destructive operations
+- 🔄 **Rollback capabilities** if something goes wrong
+- 📝 **Conventional commits** for better changelog generation
+- 🔒 **Safety checks** at every step
+
+### Example Usage
+
+```bash
+$ npm run release:patch
+
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║              Simply Table - Release Script                    ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  PRE-FLIGHT CHECKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+▶ Checking git status...
+✓ Working directory is clean
+▶ Checking current branch...
+✓ On main branch
+▶ Checking npm authentication...
+✓ Logged in as: your-username
+
+Version Change:
+  Current: 0.1.6
+  New:     0.1.7
+  Type:    patch
+
+⚠ Proceed with release? [y/N]: y
+```
+
 ## Manual Publishing
 
 ### Step 1: Update Version
@@ -157,13 +240,39 @@ ls -la package/
 - Clean install: `rm -rf node_modules package-lock.json && npm install`
 - Rebuild: `npm run build`
 
+## Direct Script Usage
+
+You can also run the script directly:
+
+```bash
+./scripts/release.sh patch
+./scripts/release.sh minor
+./scripts/release.sh major
+```
+
+## Rollback
+
+If something goes wrong during the release process:
+
+```bash
+# Remove the git tag
+git tag -d v0.1.7
+
+# Reset to previous commit
+git reset --hard HEAD~1
+
+# If already pushed, force push (use with caution)
+git push origin main --force
+git push origin :refs/tags/v0.1.7
+```
+
 ## Best Practices
 
-1. **Always test before publishing**: Run `npm run build` and test locally
-2. **Use semantic versioning**: Follow semver guidelines
-3. **Update CHANGELOG**: Document changes in each release
-4. **Tag releases**: Use git tags for version tracking
-5. **Test installation**: Install the package in a separate project before publishing
+1. **Use the automated script**: It handles all the complexity and edge cases
+2. **Always test before publishing**: The script runs tests automatically
+3. **Use semantic versioning**: Follow semver guidelines
+4. **Review changes**: The script shows you what will change before proceeding
+5. **Keep main branch clean**: Only release from a clean main branch
 
 ## Links
 
