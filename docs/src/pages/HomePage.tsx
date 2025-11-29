@@ -47,68 +47,56 @@ function App() {
     <div className="space-y-16">
       {/* Hero Section */}
       <div className="text-center space-y-6 py-8">
-        <div className="flex justify-center items-center space-x-4">
-          <h1 className="text-6xl font-bold tracking-tight bg-linear-to-r pb-1 from-primary to-primary/60 bg-clip-text text-transparent">
-            simply-table
-          </h1>
-          <div className="inline-block text-xs px-3 py-1 bg-primary/10 self-end text-primary rounded-full mb-2 font-medium">
-            v0.1.6
-          </div>
-        </div>
+        <h1 className="text-6xl font-bold tracking-tight bg-linear-to-r pb-1 from-primary to-primary/60 bg-clip-text text-transparent">
+          simply-table
+        </h1>
 
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          A powerful, table library for React. Built with TypeScript, optimized for performance, and designed for
-          maximum flexibility. Handle thousands of rows with ease.
+        <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          A powerful, lightweight table library for React. Built with TypeScript, optimized for performance, and designed for maximum flexibility.
         </p>
-        <div className="flex gap-4 justify-center pt-6">
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
           <Link
             to="/basic"
             className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl"
           >
             Get Started →
           </Link>
+          <a
+            href="https://github.com/NativSibony/simply-table"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3 bg-yellow-500 text-yellow-950 rounded-lg font-semibold hover:bg-yellow-400 transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+          >
+            <span>⭐</span>
+            <span>Star on GitHub</span>
+          </a>
           <Link
             to="/api-reference"
             className="px-8 py-3 border-2 border-border rounded-lg font-semibold hover:bg-accent transition-all"
           >
             API Reference
           </Link>
-          <a
-            href="https://github.com/NativSibony/simply-table"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-8 py-3 border-2 border-border rounded-lg font-semibold hover:bg-accent transition-all"
-          >
-            GitHub ↗
-          </a>
         </div>
       </div>
 
       {/* Features Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <FeatureCard
-          title="TypeScript First"
-          description="Built with TypeScript for complete type safety and excellent IntelliSense support."
+          title="⚡ Lightning Fast"
+          description="Virtual scrolling handles 10,000+ rows smoothly with optimized rendering."
         />
         <FeatureCard
-          title="Sorting & Filtering"
-          description="Client-side and server-side sorting and filtering with customizable comparators."
+          title="🎯 Type Safe"
+          description="Built with TypeScript for complete type safety and IntelliSense support."
         />
         <FeatureCard
-          title="Pagination"
-          description="Built-in pagination with customizable page sizes and server-side support."
+          title="🎨 Customizable"
+          description="Full control over styling, cells, rows, and components."
         />
         <FeatureCard
-          title="Virtualization"
-          description="Efficient rendering of large datasets with row virtualization for optimal performance."
-        />
-        <FeatureCard
-          title="Column Management"
-          description="Resizable and reorderable columns with drag-and-drop support."
-        />
-        <FeatureCard
-          title="Custom Rendering"
-          description="Flexible cell and row renderers for complete customization."
+          title="📦 Lightweight"
+          description="Tree-shakeable and optimized for production with minimal bundle size."
         />
       </div>
 
@@ -234,7 +222,7 @@ function App() {
           <p className="text-muted-foreground">
             Install simply-table and start building powerful data tables in minutes.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <Link
               to="/basic"
               className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
@@ -247,6 +235,20 @@ function App() {
             >
               API Documentation
             </Link>
+          </div>
+          <div className="pt-6 border-t border-border/50 mt-6">
+            <p className="text-sm text-muted-foreground mb-3">
+              ⭐ If you find simply-table useful, please star the repository!
+            </p>
+            <a
+              href="https://github.com/NativSibony/simply-table"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-yellow-500 text-yellow-950 rounded-lg font-medium hover:bg-yellow-400 transition-colors"
+            >
+              <span>⭐</span>
+              <span>Star on GitHub</span>
+            </a>
           </div>
         </div>
       </section>
