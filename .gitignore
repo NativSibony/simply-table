@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+script
+scripts
 
 # Build outputs
 *.tsbuildinfo

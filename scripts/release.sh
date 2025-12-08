@@ -205,7 +205,8 @@ calculate_new_version() {
     local current_version=$(get_current_version)
     
     # Use npm version --dry-run to calculate new version
-    npm version "$version_type" --no-git-tag-version --dry-run 2>&1 | grep -oP 'v\K[0-9]+\.[0-9]+\.[0-9]+'
+    # Compatible with both macOS and Linux
+    npm version "$version_type" --no-git-tag-version --dry-run 2>&1 | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | sed 's/v//'
 }
 
 update_package_version() {
@@ -230,12 +231,13 @@ update_docs_version() {
     if [ -f "$DOCS_VERSION_FILE" ]; then
         # Update the version badge in HomePage.tsx
         # This looks for patterns like: v0.1.6 or version: "0.1.6"
+        # Compatible with both macOS (BSD sed) and Linux (GNU sed)
         if [[ "$OSTYPE" == "darwin"* ]]; then
-            # macOS
-            sed -i '' "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/v$new_version/g" "$DOCS_VERSION_FILE"
+            # macOS - BSD sed
+            sed -i '' 's/v[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/v'"$new_version"'/g' "$DOCS_VERSION_FILE"
         else
-            # Linux
-            sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/v$new_version/g" "$DOCS_VERSION_FILE"
+            # Linux - GNU sed
+            sed -i 's/v[0-9]\+\.[0-9]\+\.[0-9]\+/v'"$new_version"'/g' "$DOCS_VERSION_FILE"
         fi
         print_success "Updated documentation to version $new_version"
     else
