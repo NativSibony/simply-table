@@ -15,13 +15,13 @@ The project includes a production-ready release script that handles everything a
 ### Quick Start
 
 ```bash
-# Patch release (0.1.6 → 0.1.7)
+# Patch release (0.1.10 → 0.1.7)
 npm run release:patch
 
-# Minor release (0.1.6 → 0.2.0)
+# Minor release (0.1.10 → 0.2.0)
 npm run release:minor
 
-# Major release (0.1.6 → 1.0.0)
+# Major release (0.1.10 → 1.0.0)
 npm run release:major
 ```
 
@@ -84,7 +84,7 @@ $ npm run release:patch
 ✓ Logged in as: your-username
 
 Version Change:
-  Current: 0.1.6
+  Current: 0.1.10
   New:     0.1.7
   Type:    patch
 
