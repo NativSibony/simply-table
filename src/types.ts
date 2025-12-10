@@ -14,7 +14,7 @@ export interface DragIndicatorProps {
 
 export interface Column<T = any> {
   id: string;
-  field: keyof T | string;
+  field: keyof T | (string & {});
   header: string | ((column: Column<T>) => React.ReactNode);
   width?: number;
   minWidth?: number;

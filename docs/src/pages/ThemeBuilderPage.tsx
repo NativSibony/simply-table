@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { SimplyTable } from 'simply-table';
 import type { Column } from 'simply-table';
 import { Button } from '../components/ui/button';
-import { Download, RotateCcw, Search, ChevronDown, ChevronRight } from 'lucide-react';
+import { Download, RotateCcw, Search, ChevronDown, ChevronRight, X, Copy, Check } from 'lucide-react';
 import './theme-builder.css';
 
 // Helper function to convert hex to RGB
@@ -89,6 +89,47 @@ const defaultTheme: TableThemeConfig = {
   cellFontSize: '0.875rem',
   cellBorderRight: '1px',
   cellBorderColor: '#e5e7eb',
+  cellBorderOpacity: 0.5,
+  cellAlignment: 'left',
+  columnMinWidth: '50px',
+  columnMaxWidth: '800px',
+};
+
+const defaultDarkTheme: TableThemeConfig = {
+  tableWidth: '100%',
+  tableBorder: '1px',
+  tableBorderColor: '#374151',
+  tableBorderOpacity: 1,
+  tableBorderStyle: 'solid',
+  tableRadius: '0.5rem',
+  tableBackground: '#1f2937',
+  tableBackgroundOpacity: 1,
+  headerBackground: '#111827',
+  headerBackgroundOpacity: 0.8,
+  headerTextColor: '#f9fafb',
+  headerFontSize: '0.875rem',
+  headerFontWeight: '500',
+  headerPadding: '0.75rem 1rem',
+  headerBorderBottom: '1px',
+  headerBorderColor: '#374151',
+  headerBorderOpacity: 1,
+  rowEvenBackground: '#1f2937',
+  rowEvenBackgroundOpacity: 0.5,
+  rowEvenTextColor: '#f9fafb',
+  rowOddBackground: '#111827',
+  rowOddBackgroundOpacity: 1,
+  rowOddTextColor: '#f9fafb',
+  rowHoverBackground: '#374151',
+  rowHoverBackgroundOpacity: 0.8,
+  rowHoverTextColor: '#ffffff',
+  rowHeight: '48px',
+  rowBorderBottom: '1px',
+  rowBorderColor: '#374151',
+  rowBorderOpacity: 1,
+  cellPadding: '0.75rem 1rem',
+  cellFontSize: '0.875rem',
+  cellBorderRight: '1px',
+  cellBorderColor: '#374151',
   cellBorderOpacity: 0.5,
   cellAlignment: 'left',
   columnMinWidth: '50px',
@@ -219,7 +260,12 @@ function ThemeControl({ label, value, onChange, type, opacity, onOpacityChange, 
 
 export function ThemeBuilderPage() {
   const [theme, setTheme] = useState<TableThemeConfig>(defaultTheme);
+  const [darkTheme, setDarkTheme] = useState<TableThemeConfig>(defaultDarkTheme);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'css' | 'json'>('css');
+  const [includeDarkMode, setIncludeDarkMode] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     tableStructure: true,
     headers: false,
@@ -274,27 +320,270 @@ export function ThemeBuilderPage() {
     setTheme(prev => ({ ...prev, [key]: value }));
   };
 
-  const resetTheme = () => setTheme(defaultTheme);
+  const resetTheme = () => {
+    setTheme(defaultTheme);
+    setDarkTheme(defaultDarkTheme);
+  };
 
-  const exportTheme = () => {
-    const css = `/* Table Theme */
-.theme-preview {
+  const generateCSS = () => {
+    let css = `/* Simply Table Theme - Generated ${new Date().toLocaleDateString()} */
+.simply-table {
+  /* Table Structure */
+  --table-width: ${theme.tableWidth};
   --table-border: ${theme.tableBorder} ${theme.tableBorderStyle} rgba(${hexToRgb(theme.tableBorderColor)}, ${theme.tableBorderOpacity});
   --table-radius: ${theme.tableRadius};
   --table-background: rgba(${hexToRgb(theme.tableBackground)}, ${theme.tableBackgroundOpacity});
+  
+  /* Header Styles */
   --header-background: rgba(${hexToRgb(theme.headerBackground)}, ${theme.headerBackgroundOpacity});
   --header-text-color: ${theme.headerTextColor};
+  --header-font-size: ${theme.headerFontSize};
+  --header-font-weight: ${theme.headerFontWeight};
+  --header-padding: ${theme.headerPadding};
+  --header-border-bottom: ${theme.headerBorderBottom} solid rgba(${hexToRgb(theme.headerBorderColor)}, ${theme.headerBorderOpacity});
+  
+  /* Row Styles - Even */
   --row-even-background: rgba(${hexToRgb(theme.rowEvenBackground)}, ${theme.rowEvenBackgroundOpacity});
+  --row-even-text-color: ${theme.rowEvenTextColor};
+  
+  /* Row Styles - Odd */
   --row-odd-background: rgba(${hexToRgb(theme.rowOddBackground)}, ${theme.rowOddBackgroundOpacity});
+  --row-odd-text-color: ${theme.rowOddTextColor};
+  
+  /* Row Styles - Hover */
   --row-hover-background: rgba(${hexToRgb(theme.rowHoverBackground)}, ${theme.rowHoverBackgroundOpacity});
+  --row-hover-text-color: ${theme.rowHoverTextColor};
+  
+  /* Row Properties */
+  --row-height: ${theme.rowHeight};
+  --row-border-bottom: ${theme.rowBorderBottom} solid rgba(${hexToRgb(theme.rowBorderColor)}, ${theme.rowBorderOpacity});
+  
+  /* Cell Styles */
+  --cell-padding: ${theme.cellPadding};
+  --cell-font-size: ${theme.cellFontSize};
+  --cell-border-right: ${theme.cellBorderRight} solid rgba(${hexToRgb(theme.cellBorderColor)}, ${theme.cellBorderOpacity});
+  --cell-alignment: ${theme.cellAlignment};
+  
+  /* Column Sizing */
+  --column-min-width: ${theme.columnMinWidth};
+  --column-max-width: ${theme.columnMaxWidth};
 }`;
-    const blob = new Blob([css], { type: 'text/css' });
+
+    if (includeDarkMode) {
+      css += `
+
+/* Dark Theme */
+.simply-table[data-theme="dark"] {
+  /* Table Structure */
+  --table-border: ${darkTheme.tableBorder} ${darkTheme.tableBorderStyle} rgba(${hexToRgb(darkTheme.tableBorderColor)}, ${darkTheme.tableBorderOpacity});
+  --table-background: rgba(${hexToRgb(darkTheme.tableBackground)}, ${darkTheme.tableBackgroundOpacity});
+  
+  /* Header Styles */
+  --header-background: rgba(${hexToRgb(darkTheme.headerBackground)}, ${darkTheme.headerBackgroundOpacity});
+  --header-text-color: ${darkTheme.headerTextColor};
+  --header-border-bottom: ${darkTheme.headerBorderBottom} solid rgba(${hexToRgb(darkTheme.headerBorderColor)}, ${darkTheme.headerBorderOpacity});
+  
+  /* Row Styles - Even */
+  --row-even-background: rgba(${hexToRgb(darkTheme.rowEvenBackground)}, ${darkTheme.rowEvenBackgroundOpacity});
+  --row-even-text-color: ${darkTheme.rowEvenTextColor};
+  
+  /* Row Styles - Odd */
+  --row-odd-background: rgba(${hexToRgb(darkTheme.rowOddBackground)}, ${darkTheme.rowOddBackgroundOpacity});
+  --row-odd-text-color: ${darkTheme.rowOddTextColor};
+  
+  /* Row Styles - Hover */
+  --row-hover-background: rgba(${hexToRgb(darkTheme.rowHoverBackground)}, ${darkTheme.rowHoverBackgroundOpacity});
+  --row-hover-text-color: ${darkTheme.rowHoverTextColor};
+  
+  /* Row Properties */
+  --row-border-bottom: ${darkTheme.rowBorderBottom} solid rgba(${hexToRgb(darkTheme.rowBorderColor)}, ${darkTheme.rowBorderOpacity});
+  
+  /* Cell Styles */
+  --cell-border-right: ${darkTheme.cellBorderRight} solid rgba(${hexToRgb(darkTheme.cellBorderColor)}, ${darkTheme.cellBorderOpacity});
+}`;
+    }
+
+    return css;
+  };
+
+  const generateJSON = () => {
+    const config: Record<string, unknown> = {
+      light: {
+        table: {
+          width: theme.tableWidth,
+          border: {
+            width: theme.tableBorder,
+            style: theme.tableBorderStyle,
+            color: theme.tableBorderColor,
+            opacity: theme.tableBorderOpacity,
+          },
+          radius: theme.tableRadius,
+          background: {
+            color: theme.tableBackground,
+            opacity: theme.tableBackgroundOpacity,
+          },
+        },
+        header: {
+          background: {
+            color: theme.headerBackground,
+            opacity: theme.headerBackgroundOpacity,
+          },
+          textColor: theme.headerTextColor,
+          fontSize: theme.headerFontSize,
+          fontWeight: theme.headerFontWeight,
+          padding: theme.headerPadding,
+          border: {
+            bottom: theme.headerBorderBottom,
+            color: theme.headerBorderColor,
+            opacity: theme.headerBorderOpacity,
+          },
+        },
+        rows: {
+          even: {
+            background: {
+              color: theme.rowEvenBackground,
+              opacity: theme.rowEvenBackgroundOpacity,
+            },
+            textColor: theme.rowEvenTextColor,
+          },
+          odd: {
+            background: {
+              color: theme.rowOddBackground,
+              opacity: theme.rowOddBackgroundOpacity,
+            },
+            textColor: theme.rowOddTextColor,
+          },
+          hover: {
+            background: {
+              color: theme.rowHoverBackground,
+              opacity: theme.rowHoverBackgroundOpacity,
+            },
+            textColor: theme.rowHoverTextColor,
+          },
+          height: theme.rowHeight,
+          border: {
+            bottom: theme.rowBorderBottom,
+            color: theme.rowBorderColor,
+            opacity: theme.rowBorderOpacity,
+          },
+        },
+        cells: {
+          padding: theme.cellPadding,
+          fontSize: theme.cellFontSize,
+          alignment: theme.cellAlignment,
+          border: {
+            right: theme.cellBorderRight,
+            color: theme.cellBorderColor,
+            opacity: theme.cellBorderOpacity,
+          },
+        },
+        columns: {
+          minWidth: theme.columnMinWidth,
+          maxWidth: theme.columnMaxWidth,
+        },
+      },
+    };
+
+    if (includeDarkMode) {
+      config.dark = {
+        table: {
+          width: darkTheme.tableWidth,
+          border: {
+            width: darkTheme.tableBorder,
+            style: darkTheme.tableBorderStyle,
+            color: darkTheme.tableBorderColor,
+            opacity: darkTheme.tableBorderOpacity,
+          },
+          radius: darkTheme.tableRadius,
+          background: {
+            color: darkTheme.tableBackground,
+            opacity: darkTheme.tableBackgroundOpacity,
+          },
+        },
+        header: {
+          background: {
+            color: darkTheme.headerBackground,
+            opacity: darkTheme.headerBackgroundOpacity,
+          },
+          textColor: darkTheme.headerTextColor,
+          fontSize: darkTheme.headerFontSize,
+          fontWeight: darkTheme.headerFontWeight,
+          padding: darkTheme.headerPadding,
+          border: {
+            bottom: darkTheme.headerBorderBottom,
+            color: darkTheme.headerBorderColor,
+            opacity: darkTheme.headerBorderOpacity,
+          },
+        },
+        rows: {
+          even: {
+            background: {
+              color: darkTheme.rowEvenBackground,
+              opacity: darkTheme.rowEvenBackgroundOpacity,
+            },
+            textColor: darkTheme.rowEvenTextColor,
+          },
+          odd: {
+            background: {
+              color: darkTheme.rowOddBackground,
+              opacity: darkTheme.rowOddBackgroundOpacity,
+            },
+            textColor: darkTheme.rowOddTextColor,
+          },
+          hover: {
+            background: {
+              color: darkTheme.rowHoverBackground,
+              opacity: darkTheme.rowHoverBackgroundOpacity,
+            },
+            textColor: darkTheme.rowHoverTextColor,
+          },
+          height: darkTheme.rowHeight,
+          border: {
+            bottom: darkTheme.rowBorderBottom,
+            color: darkTheme.rowBorderColor,
+            opacity: darkTheme.rowBorderOpacity,
+          },
+        },
+        cells: {
+          padding: darkTheme.cellPadding,
+          fontSize: darkTheme.cellFontSize,
+          alignment: darkTheme.cellAlignment,
+          border: {
+            right: darkTheme.cellBorderRight,
+            color: darkTheme.cellBorderColor,
+            opacity: darkTheme.cellBorderOpacity,
+          },
+        },
+        columns: {
+          minWidth: darkTheme.columnMinWidth,
+          maxWidth: darkTheme.columnMaxWidth,
+        },
+      };
+    }
+
+    return JSON.stringify(config, null, 2);
+  };
+
+  const exportTheme = () => {
+    setShowExportModal(true);
+  };
+
+  const downloadTheme = () => {
+    const content = exportFormat === 'css' ? generateCSS() : generateJSON();
+    const blob = new Blob([content], { type: exportFormat === 'css' ? 'text/css' : 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'table-theme.css';
+    a.download = `table-theme.${exportFormat}`;
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const copyToClipboard = async () => {
+    const content = exportFormat === 'css' ? generateCSS() : generateJSON();
+    await navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -388,6 +677,85 @@ export function ThemeBuilderPage() {
             </Button>
           </div>
         </div>
+
+        {/* Export Modal */}
+        {showExportModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-card rounded-lg border shadow-lg max-w-3xl w-full max-h-[80vh] flex flex-col">
+              <div className="flex items-center justify-between p-6 border-b">
+                <h2 className="text-2xl font-bold">Export Theme</h2>
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="p-2 hover:bg-accent rounded-md transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4 flex-1 overflow-hidden flex flex-col">
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => setExportFormat('css')}
+                      variant={exportFormat === 'css' ? 'default' : 'outline'}
+                      size="sm"
+                    >
+                      CSS
+                    </Button>
+                    <Button
+                      onClick={() => setExportFormat('json')}
+                      variant={exportFormat === 'json' ? 'default' : 'outline'}
+                      size="sm"
+                    >
+                      JSON
+                    </Button>
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={includeDarkMode}
+                      onChange={(e) => setIncludeDarkMode(e.target.checked)}
+                      className="rounded"
+                    />
+                    Include Dark Mode
+                  </label>
+                </div>
+
+                <div className="flex-1 overflow-auto bg-muted rounded-lg p-4">
+                  <pre className="text-sm">
+                    <code>{exportFormat === 'css' ? generateCSS() : generateJSON()}</code>
+                  </pre>
+                </div>
+
+                <div className="text-sm text-muted-foreground">
+                  {exportFormat === 'css'
+                    ? 'Apply this CSS to your table by adding the .simply-table class to your table container.'
+                    : 'Use this JSON configuration to programmatically apply the theme in your application.'}
+                </div>
+              </div>
+
+              <div className="p-6 border-t flex gap-2">
+                <Button onClick={copyToClipboard} variant="outline" className="flex-1">
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy to Clipboard
+                    </>
+                  )}
+                </Button>
+                <Button onClick={downloadTheme} className="flex-1">
+                  <Download className="h-4 w-4 mr-2" />
+                  Download {exportFormat.toUpperCase()}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="bg-card rounded-lg border p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
