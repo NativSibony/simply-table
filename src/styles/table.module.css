@@ -5,6 +5,7 @@
   border: 1px solid hsl(var(--st-border));
   border-radius: var(--st-radius);
   background-color: hsl(var(--st-card));
+  overflow: hidden; /* Ensures child elements respect border-radius */
 }
 
 /* Header */

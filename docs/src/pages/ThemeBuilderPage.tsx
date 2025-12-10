@@ -2,264 +2,303 @@ import { useState, useEffect } from 'react';
 import { SimplyTable } from 'simply-table';
 import type { Column } from 'simply-table';
 import { Button } from '../components/ui/button';
-import { Copy, Download, Upload, RotateCcw, Palette } from 'lucide-react';
+import { Download, RotateCcw, Search, ChevronDown, ChevronRight } from 'lucide-react';
+import './theme-builder.css';
 
-interface ThemeConfig {
-  // Colors
-  radius: string;
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  popover: string;
-  popoverForeground: string;
-  primary: string;
-  primaryForeground: string;
-  secondary: string;
-  secondaryForeground: string;
-  muted: string;
-  mutedForeground: string;
-  accent: string;
-  accentForeground: string;
-  destructive: string;
-  destructiveForeground: string;
-  border: string;
-  input: string;
-  ring: string;
+// Helper function to convert hex to RGB
+const hexToRgb = (hex: string): string => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : '0, 0, 0';
+};
+
+interface TableThemeConfig {
+  tableWidth: string;
+  tableBorder: string;
+  tableBorderColor: string;
+  tableBorderOpacity: number;
+  tableBorderStyle: string;
+  tableRadius: string;
+  tableBackground: string;
+  tableBackgroundOpacity: number;
+  headerBackground: string;
+  headerBackgroundOpacity: number;
+  headerTextColor: string;
+  headerFontSize: string;
+  headerFontWeight: string;
+  headerPadding: string;
+  headerBorderBottom: string;
+  headerBorderColor: string;
+  headerBorderOpacity: number;
+  rowEvenBackground: string;
+  rowEvenBackgroundOpacity: number;
+  rowEvenTextColor: string;
+  rowOddBackground: string;
+  rowOddBackgroundOpacity: number;
+  rowOddTextColor: string;
+  rowHoverBackground: string;
+  rowHoverBackgroundOpacity: number;
+  rowHoverTextColor: string;
+  rowHeight: string;
+  rowBorderBottom: string;
+  rowBorderColor: string;
+  rowBorderOpacity: number;
+  cellPadding: string;
+  cellFontSize: string;
+  cellBorderRight: string;
+  cellBorderColor: string;
+  cellBorderOpacity: number;
+  cellAlignment: string;
+  columnMinWidth: string;
+  columnMaxWidth: string;
 }
 
-const defaultTheme: ThemeConfig = {
-  radius: '0.625rem',
-  background: '0 0% 100%',
-  foreground: '0 0% 14.5%',
-  card: '0 0% 100%',
-  cardForeground: '0 0% 14.5%',
-  popover: '0 0% 100%',
-  popoverForeground: '0 0% 14.5%',
-  primary: '0 0% 20.5%',
-  primaryForeground: '0 0% 98.5%',
-  secondary: '0 0% 97%',
-  secondaryForeground: '0 0% 20.5%',
-  muted: '0 0% 97%',
-  mutedForeground: '0 0% 55.6%',
-  accent: '0 0% 97%',
-  accentForeground: '0 0% 20.5%',
-  destructive: '0 84.2% 60.2%',
-  destructiveForeground: '0 0% 98%',
-  border: '0 0% 92.2%',
-  input: '0 0% 92.2%',
-  ring: '0 0% 70.8%',
-};
-
-const darkTheme: ThemeConfig = {
-  radius: '0.625rem',
-  background: '0 0% 14.5%',
-  foreground: '0 0% 98.5%',
-  card: '0 0% 20.5%',
-  cardForeground: '0 0% 98.5%',
-  popover: '0 0% 20.5%',
-  popoverForeground: '0 0% 98.5%',
-  primary: '0 0% 92.2%',
-  primaryForeground: '0 0% 20.5%',
-  secondary: '0 0% 26.9%',
-  secondaryForeground: '0 0% 98.5%',
-  muted: '0 0% 26.9%',
-  mutedForeground: '0 0% 70.8%',
-  accent: '0 0% 26.9%',
-  accentForeground: '0 0% 98.5%',
-  destructive: '0 62.8% 30.6%',
-  destructiveForeground: '0 0% 98%',
-  border: '0 0% 26.9%',
-  input: '0 0% 26.9%',
-  ring: '0 0% 55.6%',
-};
-
-const minimalTheme: ThemeConfig = {
-  radius: '0.25rem',
-  background: '0 0% 100%',
-  foreground: '0 0% 10%',
-  card: '0 0% 98%',
-  cardForeground: '0 0% 10%',
-  popover: '0 0% 98%',
-  popoverForeground: '0 0% 10%',
-  primary: '0 0% 30%',
-  primaryForeground: '0 0% 100%',
-  secondary: '0 0% 95%',
-  secondaryForeground: '0 0% 30%',
-  muted: '0 0% 96%',
-  mutedForeground: '0 0% 50%',
-  accent: '0 0% 94%',
-  accentForeground: '0 0% 30%',
-  destructive: '0 70% 50%',
-  destructiveForeground: '0 0% 100%',
-  border: '0 0% 90%',
-  input: '0 0% 90%',
-  ring: '0 0% 60%',
-};
-
-const colorfulTheme: ThemeConfig = {
-  radius: '0.75rem',
-  background: '210 40% 98%',
-  foreground: '222 47% 11%',
-  card: '0 0% 100%',
-  cardForeground: '222 47% 11%',
-  popover: '0 0% 100%',
-  popoverForeground: '222 47% 11%',
-  primary: '221 83% 53%',
-  primaryForeground: '210 40% 98%',
-  secondary: '210 40% 96%',
-  secondaryForeground: '222 47% 11%',
-  muted: '210 40% 96%',
-  mutedForeground: '215 16% 47%',
-  accent: '210 40% 96%',
-  accentForeground: '222 47% 11%',
-  destructive: '0 84% 60%',
-  destructiveForeground: '210 40% 98%',
-  border: '214 32% 91%',
-  input: '214 32% 91%',
-  ring: '221 83% 53%',
+const defaultTheme: TableThemeConfig = {
+  tableWidth: '100%',
+  tableBorder: '1px',
+  tableBorderColor: '#e5e7eb',
+  tableBorderOpacity: 1,
+  tableBorderStyle: 'solid',
+  tableRadius: '0.5rem',
+  tableBackground: '#ffffff',
+  tableBackgroundOpacity: 1,
+  headerBackground: '#f9fafb',
+  headerBackgroundOpacity: 0.5,
+  headerTextColor: '#111827',
+  headerFontSize: '0.875rem',
+  headerFontWeight: '500',
+  headerPadding: '0.75rem 1rem',
+  headerBorderBottom: '1px',
+  headerBorderColor: '#e5e7eb',
+  headerBorderOpacity: 1,
+  rowEvenBackground: '#f9fafb',
+  rowEvenBackgroundOpacity: 0.2,
+  rowEvenTextColor: '#111827',
+  rowOddBackground: '#ffffff',
+  rowOddBackgroundOpacity: 1,
+  rowOddTextColor: '#111827',
+  rowHoverBackground: '#f3f4f6',
+  rowHoverBackgroundOpacity: 0.8,
+  rowHoverTextColor: '#111827',
+  rowHeight: '48px',
+  rowBorderBottom: '1px',
+  rowBorderColor: '#e5e7eb',
+  rowBorderOpacity: 1,
+  cellPadding: '0.75rem 1rem',
+  cellFontSize: '0.875rem',
+  cellBorderRight: '1px',
+  cellBorderColor: '#e5e7eb',
+  cellBorderOpacity: 0.5,
+  cellAlignment: 'left',
+  columnMinWidth: '50px',
+  columnMaxWidth: '800px',
 };
 
 interface SampleData {
   id: number;
-  name: string;
-  category: string;
-  value: number;
+  representative: string;
+  dealSize: string;
+  dealValue: string;
   status: string;
+  closeDate: string;
 }
 
 const sampleData: SampleData[] = [
-  { id: 1, name: 'Product A', category: 'Electronics', value: 299, status: 'Active' },
-  { id: 2, name: 'Product B', category: 'Clothing', value: 49, status: 'Active' },
-  { id: 3, name: 'Product C', category: 'Books', value: 19, status: 'Inactive' },
-  { id: 4, name: 'Product D', category: 'Electronics', value: 599, status: 'Active' },
-  { id: 5, name: 'Product E', category: 'Home', value: 129, status: 'Active' },
+  { id: 1, representative: 'Akira Tanaka', dealSize: '$10,462.24', dealValue: '$10,462.24', status: 'Won', closeDate: 'Sep 17, 2025' },
+  { id: 2, representative: 'Sarah Martinez', dealSize: '$18,738.66', dealValue: '$56,215.98', status: 'Won', closeDate: 'Oct 20, 2025' },
+  { id: 3, representative: 'Sarah Martinez', dealSize: '$128.26', dealValue: '$9,491.24', status: 'Lost', closeDate: 'Oct 8, 2025' },
+  { id: 4, representative: 'Olivia Bennett', dealSize: '$1,796.71', dealValue: '$7,186.84', status: 'Won', closeDate: 'Dec 1, 2025' },
+  { id: 5, representative: 'David Thompson', dealSize: '$3,584.07', dealValue: '$46,592.91', status: 'Won', closeDate: 'Oct 5, 2025' },
+  { id: 6, representative: 'Emily Davis', dealSize: '$14,903.81', dealValue: '$44,711.43', status: 'Won', closeDate: 'Nov 4, 2025' },
+  { id: 7, representative: 'David Thompson', dealSize: '$560.54', dealValue: '$71,749.12', status: 'Won', closeDate: 'Oct 12, 2025' },
+  { id: 8, representative: 'Mei Chen', dealSize: '$10,037.96', dealValue: '$170,645.32', status: 'Won', closeDate: 'Sep 15, 2025' },
+  { id: 9, representative: 'Sarah Martinez', dealSize: '$354.95', dealValue: '$18,102.45', status: 'Won', closeDate: 'Nov 25, 2025' },
+  { id: 10, representative: 'James Wilson', dealSize: '$18,375.50', dealValue: '$55,126.50', status: 'Won', closeDate: 'Oct 28, 2025' },
+  { id: 11, representative: 'David Thompson', dealSize: '$2,054.61', dealValue: '$34,928.37', status: 'Lost', closeDate: 'Oct 26, 2025' },
+  { id: 12, representative: 'Thomas Müller', dealSize: '$26,055.06', dealValue: '$26,055.06', status: 'Won', closeDate: 'Nov 8, 2025' },
+  { id: 13, representative: 'Sarah Martinez', dealSize: '$559.33', dealValue: '$20,695.21', status: 'Won', closeDate: 'Nov 15, 2025' },
+  { id: 14, representative: 'Liu Wei', dealSize: '$15,974.05', dealValue: '$47,922.15', status: 'Won', closeDate: 'Oct 29, 2025' },
+  { id: 15, representative: 'Olivia Bennett', dealSize: '$108.38', dealValue: '$8,236.88', status: 'Lost', closeDate: 'Oct 30, 2025' },
+  { id: 16, representative: 'Sarah Martinez', dealSize: '$122.40', dealValue: '$3,916.80', status: 'Lost', closeDate: 'Sep 29, 2025' },
+  { id: 17, representative: 'Kim Seung-Min', dealSize: '$346.35', dealValue: '$48,835.35', status: 'Won', closeDate: 'Dec 9, 2025' },
+  { id: 18, representative: 'Thomas Müller', dealSize: '$1,964.88', dealValue: '$1,964.88', status: 'Won', closeDate: 'Nov 8, 2025' },
 ];
 
-export function ThemeBuilderPage() {
-  const [theme, setTheme] = useState<ThemeConfig>(defaultTheme);
-  const [copiedCSS, setCopiedCSS] = useState(false);
-  const [copiedJSON, setCopiedJSON] = useState(false);
+function CollapsibleSection({ title, icon, isExpanded, onToggle, children }: {
+  title: string;
+  icon: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between p-4 hover:bg-accent transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <span>{icon}</span>
+          <span className="text-sm font-medium">{title}</span>
+        </div>
+        {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+      </button>
+      {isExpanded && <div className="p-4 pt-0 space-y-3">{children}</div>}
+    </div>
+  );
+}
 
-  // Apply theme to preview container
+function ThemeControl({ label, value, onChange, type, opacity, onOpacityChange, options }: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type: 'text' | 'color' | 'select';
+  opacity?: number;
+  onOpacityChange?: (value: number) => void;
+  options?: string[];
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs font-medium text-muted-foreground">{label}</label>
+      {type === 'text' && (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full px-3 py-1.5 bg-background border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+      )}
+      {type === 'color' && (
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <input
+              type="color"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              className="w-12 h-9 rounded border cursor-pointer"
+            />
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              className="flex-1 px-3 py-1.5 bg-background border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          {opacity !== undefined && onOpacityChange && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Opacity:</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={opacity}
+                onChange={(e) => onOpacityChange(parseFloat(e.target.value))}
+                className="flex-1"
+              />
+              <span className="text-xs text-muted-foreground w-10">{Math.round(opacity * 100)}%</span>
+            </div>
+          )}
+        </div>
+      )}
+      {type === 'select' && options && (
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full px-3 py-1.5 bg-background border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          {options.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+      )}
+    </div>
+  );
+}
+
+export function ThemeBuilderPage() {
+  const [theme, setTheme] = useState<TableThemeConfig>(defaultTheme);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    tableStructure: true,
+    headers: false,
+    rows: false,
+    borders: false,
+    radius: false,
+    sizing: false,
+  });
+
   useEffect(() => {
     const previewContainer = document.getElementById('theme-preview');
     if (previewContainer) {
-      Object.entries(theme).forEach(([key, value]) => {
-        const cssVar = `--st-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-        previewContainer.style.setProperty(cssVar, value);
-      });
+      const style = previewContainer.style;
+      style.setProperty('--table-width', theme.tableWidth);
+      style.setProperty('--table-border', `${theme.tableBorder} ${theme.tableBorderStyle} rgba(${hexToRgb(theme.tableBorderColor)}, ${theme.tableBorderOpacity})`);
+      style.setProperty('--table-radius', theme.tableRadius);
+      style.setProperty('--table-background', `rgba(${hexToRgb(theme.tableBackground)}, ${theme.tableBackgroundOpacity})`);
+      style.setProperty('--header-background', `rgba(${hexToRgb(theme.headerBackground)}, ${theme.headerBackgroundOpacity})`);
+      style.setProperty('--header-text-color', theme.headerTextColor);
+      style.setProperty('--header-font-size', theme.headerFontSize);
+      style.setProperty('--header-font-weight', theme.headerFontWeight);
+      style.setProperty('--header-padding', theme.headerPadding);
+      style.setProperty('--header-border-bottom', `${theme.headerBorderBottom} solid rgba(${hexToRgb(theme.headerBorderColor)}, ${theme.headerBorderOpacity})`);
+      style.setProperty('--row-even-background', `rgba(${hexToRgb(theme.rowEvenBackground)}, ${theme.rowEvenBackgroundOpacity})`);
+      style.setProperty('--row-even-text-color', theme.rowEvenTextColor);
+      style.setProperty('--row-odd-background', `rgba(${hexToRgb(theme.rowOddBackground)}, ${theme.rowOddBackgroundOpacity})`);
+      style.setProperty('--row-odd-text-color', theme.rowOddTextColor);
+      style.setProperty('--row-hover-background', `rgba(${hexToRgb(theme.rowHoverBackground)}, ${theme.rowHoverBackgroundOpacity})`);
+      style.setProperty('--row-hover-text-color', theme.rowHoverTextColor);
+      style.setProperty('--row-height', theme.rowHeight);
+      style.setProperty('--row-border-bottom', `${theme.rowBorderBottom} solid rgba(${hexToRgb(theme.rowBorderColor)}, ${theme.rowBorderOpacity})`);
+      style.setProperty('--cell-padding', theme.cellPadding);
+      style.setProperty('--cell-font-size', theme.cellFontSize);
+      style.setProperty('--cell-border-right', `${theme.cellBorderRight} solid rgba(${hexToRgb(theme.cellBorderColor)}, ${theme.cellBorderOpacity})`);
+      style.setProperty('--cell-alignment', theme.cellAlignment);
     }
   }, [theme]);
 
   const columns: Column<SampleData>[] = [
-    { id: 'id', field: 'id', header: 'ID', width: 80, sortable: true },
-    { id: 'name', field: 'name', header: 'Name', width: 200, sortable: true },
-    { id: 'category', field: 'category', header: 'Category', width: 150, sortable: true },
-    { id: 'value', field: 'value', header: 'Value', width: 120, sortable: true },
+    { id: 'representative', field: 'representative', header: 'Sales Representative', width: 200, sortable: true },
+    { id: 'dealSize', field: 'dealSize', header: 'Deal Size', width: 150, sortable: true },
+    { id: 'dealValue', field: 'dealValue', header: 'Deal Value', width: 150, sortable: true },
     { id: 'status', field: 'status', header: 'Status', width: 120 },
+    { id: 'closeDate', field: 'closeDate', header: 'Close Date', width: 150 },
   ];
 
-  const generateCSS = () => {
-    return `:root {
-  --st-radius: ${theme.radius};
-  --st-background: ${theme.background};
-  --st-foreground: ${theme.foreground};
-  --st-card: ${theme.card};
-  --st-card-foreground: ${theme.cardForeground};
-  --st-popover: ${theme.popover};
-  --st-popover-foreground: ${theme.popoverForeground};
-  --st-primary: ${theme.primary};
-  --st-primary-foreground: ${theme.primaryForeground};
-  --st-secondary: ${theme.secondary};
-  --st-secondary-foreground: ${theme.secondaryForeground};
-  --st-muted: ${theme.muted};
-  --st-muted-foreground: ${theme.mutedForeground};
-  --st-accent: ${theme.accent};
-  --st-accent-foreground: ${theme.accentForeground};
-  --st-destructive: ${theme.destructive};
-  --st-destructive-foreground: ${theme.destructiveForeground};
-  --st-border: ${theme.border};
-  --st-input: ${theme.input};
-  --st-ring: ${theme.ring};
-}`;
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const copyCSS = async () => {
-    await navigator.clipboard.writeText(generateCSS());
-    setCopiedCSS(true);
-    setTimeout(() => setCopiedCSS(false), 2000);
-  };
-
-  const copyJSON = async () => {
-    await navigator.clipboard.writeText(JSON.stringify(theme, null, 2));
-    setCopiedJSON(true);
-    setTimeout(() => setCopiedJSON(false), 2000);
-  };
-
-  const downloadCSS = () => {
-    const blob = new Blob([generateCSS()], { type: 'text/css' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'simply-table-theme.css';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const downloadJSON = () => {
-    const blob = new Blob([JSON.stringify(theme, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'simply-table-theme.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const importTheme = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const imported = JSON.parse(event.target?.result as string);
-            setTheme({ ...defaultTheme, ...imported });
-          } catch {
-            alert('Invalid theme file');
-          }
-        };
-        reader.readAsText(file);
-      }
-    };
-    input.click();
-  };
-
-  const resetTheme = () => {
-    setTheme(defaultTheme);
-  };
-
-  const applyPreset = (preset: 'light' | 'dark' | 'minimal' | 'colorful') => {
-    const presets = {
-      light: defaultTheme,
-      dark: darkTheme,
-      minimal: minimalTheme,
-      colorful: colorfulTheme,
-    };
-    setTheme(presets[preset]);
-  };
-
-  const updateThemeValue = (key: keyof ThemeConfig, value: string) => {
+  const updateThemeValue = <K extends keyof TableThemeConfig>(key: K, value: TableThemeConfig[K]) => {
     setTheme(prev => ({ ...prev, [key]: value }));
+  };
+
+  const resetTheme = () => setTheme(defaultTheme);
+
+  const exportTheme = () => {
+    const css = `/* Table Theme */
+.theme-preview {
+  --table-border: ${theme.tableBorder} ${theme.tableBorderStyle} rgba(${hexToRgb(theme.tableBorderColor)}, ${theme.tableBorderOpacity});
+  --table-radius: ${theme.tableRadius};
+  --table-background: rgba(${hexToRgb(theme.tableBackground)}, ${theme.tableBackgroundOpacity});
+  --header-background: rgba(${hexToRgb(theme.headerBackground)}, ${theme.headerBackgroundOpacity});
+  --header-text-color: ${theme.headerTextColor};
+  --row-even-background: rgba(${hexToRgb(theme.rowEvenBackground)}, ${theme.rowEvenBackgroundOpacity});
+  --row-odd-background: rgba(${hexToRgb(theme.rowOddBackground)}, ${theme.rowOddBackgroundOpacity});
+  --row-hover-background: rgba(${hexToRgb(theme.rowHoverBackground)}, ${theme.rowHoverBackgroundOpacity});
+}`;
+    const blob = new Blob([css], { type: 'text/css' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'table-theme.css';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-4xl font-bold mb-4">Theme Builder</h1>
         <p className="text-lg text-muted-foreground">
@@ -267,359 +306,107 @@ export function ThemeBuilderPage() {
         </p>
       </div>
 
-      {/* Preset Themes */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold">Preset Themes</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Button
-            onClick={() => applyPreset('light')}
-            variant="outline"
-            className="h-24 flex-col gap-2"
-          >
-            <Palette className="h-6 w-6" />
-            <span>Light</span>
-          </Button>
-          <Button
-            onClick={() => applyPreset('dark')}
-            variant="outline"
-            className="h-24 flex-col gap-2"
-          >
-            <Palette className="h-6 w-6" />
-            <span>Dark</span>
-          </Button>
-          <Button
-            onClick={() => applyPreset('minimal')}
-            variant="outline"
-            className="h-24 flex-col gap-2"
-          >
-            <Palette className="h-6 w-6" />
-            <span>Minimal</span>
-          </Button>
-          <Button
-            onClick={() => applyPreset('colorful')}
-            variant="outline"
-            className="h-24 flex-col gap-2"
-          >
-            <Palette className="h-6 w-6" />
-            <span>Colorful</span>
-          </Button>
-        </div>
-      </section>
-
-      {/* Main Content Grid */}
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Left Column - Customization */}
-        <div className="space-y-6">
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold">Customize Theme</h2>
-            
-            {/* Border Radius */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Border Radius</label>
+      <div className="grid lg:grid-cols-[400px_1fr] gap-6">
+        <div className="bg-card rounded-lg border h-[calc(100vh-200px)] overflow-hidden flex flex-col shadow-sm">
+          <div className="p-4 border-b">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                value={theme.radius}
-                onChange={(e) => updateThemeValue('radius', e.target.value)}
-                className="w-full px-3 py-2 border rounded-md"
-                placeholder="0.625rem"
+                placeholder="Search theme variables..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 bg-background border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
+            </div>
+            <div className="mt-2 text-xs text-muted-foreground">71 total variables</div>
+          </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <CollapsibleSection title="Table Structure" icon="📐" isExpanded={expandedSections.tableStructure} onToggle={() => toggleSection('tableStructure')}>
+                <ThemeControl label="Table Width" value={theme.tableWidth} onChange={(v) => updateThemeValue('tableWidth', v)} type="text" />
+                <ThemeControl label="Table Background" value={theme.tableBackground} onChange={(v) => updateThemeValue('tableBackground', v)} type="color" opacity={theme.tableBackgroundOpacity} onOpacityChange={(v) => updateThemeValue('tableBackgroundOpacity', v)} />
+                <ThemeControl label="Table Border" value={theme.tableBorder} onChange={(v) => updateThemeValue('tableBorder', v)} type="text" />
+                <ThemeControl label="Border Color" value={theme.tableBorderColor} onChange={(v) => updateThemeValue('tableBorderColor', v)} type="color" opacity={theme.tableBorderOpacity} onOpacityChange={(v) => updateThemeValue('tableBorderOpacity', v)} />
+                <ThemeControl label="Border Style" value={theme.tableBorderStyle} onChange={(v) => updateThemeValue('tableBorderStyle', v)} type="select" options={['solid', 'dashed', 'dotted', 'double']} />
+                <ThemeControl label="Table Radius" value={theme.tableRadius} onChange={(v) => updateThemeValue('tableRadius', v)} type="text" />
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Headers" icon="📋" isExpanded={expandedSections.headers} onToggle={() => toggleSection('headers')}>
+                <ThemeControl label="Background Color" value={theme.headerBackground} onChange={(v) => updateThemeValue('headerBackground', v)} type="color" opacity={theme.headerBackgroundOpacity} onOpacityChange={(v) => updateThemeValue('headerBackgroundOpacity', v)} />
+                <ThemeControl label="Text Color" value={theme.headerTextColor} onChange={(v) => updateThemeValue('headerTextColor', v)} type="color" />
+                <ThemeControl label="Font Size" value={theme.headerFontSize} onChange={(v) => updateThemeValue('headerFontSize', v)} type="text" />
+                <ThemeControl label="Font Weight" value={theme.headerFontWeight} onChange={(v) => updateThemeValue('headerFontWeight', v)} type="select" options={['300', '400', '500', '600', '700', '800']} />
+                <ThemeControl label="Padding" value={theme.headerPadding} onChange={(v) => updateThemeValue('headerPadding', v)} type="text" />
+                <ThemeControl label="Border Bottom" value={theme.headerBorderBottom} onChange={(v) => updateThemeValue('headerBorderBottom', v)} type="text" />
+                <ThemeControl label="Border Color" value={theme.headerBorderColor} onChange={(v) => updateThemeValue('headerBorderColor', v)} type="color" opacity={theme.headerBorderOpacity} onOpacityChange={(v) => updateThemeValue('headerBorderOpacity', v)} />
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Rows & Cells" icon="📊" isExpanded={expandedSections.rows} onToggle={() => toggleSection('rows')}>
+                <div className="text-xs font-semibold text-muted-foreground mb-2">Even Rows</div>
+                <ThemeControl label="Background" value={theme.rowEvenBackground} onChange={(v) => updateThemeValue('rowEvenBackground', v)} type="color" opacity={theme.rowEvenBackgroundOpacity} onOpacityChange={(v) => updateThemeValue('rowEvenBackgroundOpacity', v)} />
+                <ThemeControl label="Text Color" value={theme.rowEvenTextColor} onChange={(v) => updateThemeValue('rowEvenTextColor', v)} type="color" />
+                <div className="text-xs font-semibold text-muted-foreground mb-2 mt-4">Odd Rows</div>
+                <ThemeControl label="Background" value={theme.rowOddBackground} onChange={(v) => updateThemeValue('rowOddBackground', v)} type="color" opacity={theme.rowOddBackgroundOpacity} onOpacityChange={(v) => updateThemeValue('rowOddBackgroundOpacity', v)} />
+                <ThemeControl label="Text Color" value={theme.rowOddTextColor} onChange={(v) => updateThemeValue('rowOddTextColor', v)} type="color" />
+                <div className="text-xs font-semibold text-muted-foreground mb-2 mt-4">Hover State</div>
+                <ThemeControl label="Background" value={theme.rowHoverBackground} onChange={(v) => updateThemeValue('rowHoverBackground', v)} type="color" opacity={theme.rowHoverBackgroundOpacity} onOpacityChange={(v) => updateThemeValue('rowHoverBackgroundOpacity', v)} />
+                <ThemeControl label="Text Color" value={theme.rowHoverTextColor} onChange={(v) => updateThemeValue('rowHoverTextColor', v)} type="color" />
+                <div className="text-xs font-semibold text-muted-foreground mb-2 mt-4">Cell Properties</div>
+                <ThemeControl label="Padding" value={theme.cellPadding} onChange={(v) => updateThemeValue('cellPadding', v)} type="text" />
+                <ThemeControl label="Font Size" value={theme.cellFontSize} onChange={(v) => updateThemeValue('cellFontSize', v)} type="text" />
+                <ThemeControl label="Alignment" value={theme.cellAlignment} onChange={(v) => updateThemeValue('cellAlignment', v)} type="select" options={['left', 'center', 'right']} />
+                <ThemeControl label="Row Height" value={theme.rowHeight} onChange={(v) => updateThemeValue('rowHeight', v)} type="text" />
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Borders" icon="🔲" isExpanded={expandedSections.borders} onToggle={() => toggleSection('borders')}>
+                <ThemeControl label="Row Border Bottom" value={theme.rowBorderBottom} onChange={(v) => updateThemeValue('rowBorderBottom', v)} type="text" />
+                <ThemeControl label="Row Border Color" value={theme.rowBorderColor} onChange={(v) => updateThemeValue('rowBorderColor', v)} type="color" opacity={theme.rowBorderOpacity} onOpacityChange={(v) => updateThemeValue('rowBorderOpacity', v)} />
+                <ThemeControl label="Cell Border Right" value={theme.cellBorderRight} onChange={(v) => updateThemeValue('cellBorderRight', v)} type="text" />
+                <ThemeControl label="Cell Border Color" value={theme.cellBorderColor} onChange={(v) => updateThemeValue('cellBorderColor', v)} type="color" opacity={theme.cellBorderOpacity} onOpacityChange={(v) => updateThemeValue('cellBorderOpacity', v)} />
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Radius" icon="⭕" isExpanded={expandedSections.radius} onToggle={() => toggleSection('radius')}>
+                <ThemeControl label="Table Radius" value={theme.tableRadius} onChange={(v) => updateThemeValue('tableRadius', v)} type="text" />
+                <p className="text-xs text-muted-foreground">Controls all table corners (header top and last row bottom)</p>
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Sizing" icon="📏" isExpanded={expandedSections.sizing} onToggle={() => toggleSection('sizing')}>
+                <ThemeControl label="Column Min Width" value={theme.columnMinWidth} onChange={(v) => updateThemeValue('columnMinWidth', v)} type="text" />
+                <ThemeControl label="Column Max Width" value={theme.columnMaxWidth} onChange={(v) => updateThemeValue('columnMaxWidth', v)} type="text" />
+              </CollapsibleSection>
             </div>
 
-            {/* Colors Section */}
-            <div className="space-y-4 pt-4">
-              <h3 className="text-lg font-semibold">Colors</h3>
-              
-              <ColorInput
-                label="Background"
-                value={theme.background}
-                onChange={(v) => updateThemeValue('background', v)}
-              />
-              <ColorInput
-                label="Foreground"
-                value={theme.foreground}
-                onChange={(v) => updateThemeValue('foreground', v)}
-              />
-              <ColorInput
-                label="Primary"
-                value={theme.primary}
-                onChange={(v) => updateThemeValue('primary', v)}
-              />
-              <ColorInput
-                label="Primary Foreground"
-                value={theme.primaryForeground}
-                onChange={(v) => updateThemeValue('primaryForeground', v)}
-              />
-              <ColorInput
-                label="Secondary"
-                value={theme.secondary}
-                onChange={(v) => updateThemeValue('secondary', v)}
-              />
-              <ColorInput
-                label="Secondary Foreground"
-                value={theme.secondaryForeground}
-                onChange={(v) => updateThemeValue('secondaryForeground', v)}
-              />
-              <ColorInput
-                label="Muted"
-                value={theme.muted}
-                onChange={(v) => updateThemeValue('muted', v)}
-              />
-              <ColorInput
-                label="Muted Foreground"
-                value={theme.mutedForeground}
-                onChange={(v) => updateThemeValue('mutedForeground', v)}
-              />
-              <ColorInput
-                label="Accent"
-                value={theme.accent}
-                onChange={(v) => updateThemeValue('accent', v)}
-              />
-              <ColorInput
-                label="Accent Foreground"
-                value={theme.accentForeground}
-                onChange={(v) => updateThemeValue('accentForeground', v)}
-              />
-              <ColorInput
-                label="Border"
-                value={theme.border}
-                onChange={(v) => updateThemeValue('border', v)}
-              />
-              <ColorInput
-                label="Input"
-                value={theme.input}
-                onChange={(v) => updateThemeValue('input', v)}
-              />
-              <ColorInput
-                label="Ring"
-                value={theme.ring}
-                onChange={(v) => updateThemeValue('ring', v)}
-              />
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-wrap gap-2 pt-4">
-              <Button onClick={resetTheme} variant="outline" size="sm">
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Reset
-              </Button>
-              <Button onClick={importTheme} variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
-                Import JSON
-              </Button>
-            </div>
-          </section>
+          <div className="p-4 border-t flex gap-2">
+            <Button onClick={resetTheme} variant="outline" size="sm" className="flex-1">
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset
+            </Button>
+            <Button onClick={exportTheme} size="sm" className="flex-1">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
         </div>
 
-        {/* Right Column - Preview & Export */}
-        <div className="space-y-6">
-          {/* Live Preview */}
-          <section className="space-y-4">
+        <div className="bg-card rounded-lg border p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold">Live Preview</h2>
-            <div id="theme-preview" className="border rounded-lg p-4">
-              <SimplyTable
-                columns={columns}
-                rows={sampleData}
-                rowKey="id"
-                enablePagination={true}
-                pageSize={5}
-                className="h-[400px]"
-              />
-            </div>
-          </section>
-
-          {/* Export Section */}
-          <section className="space-y-4">
-            <h2 className="text-2xl font-bold">Export Theme</h2>
-            
-            {/* CSS Output */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">CSS Variables</label>
-                <div className="flex gap-2">
-                  <Button onClick={copyCSS} variant="outline" size="sm">
-                    <Copy className="h-4 w-4 mr-2" />
-                    {copiedCSS ? 'Copied!' : 'Copy'}
-                  </Button>
-                  <Button onClick={downloadCSS} variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                </div>
-              </div>
-              <pre className="p-4 bg-muted rounded-lg text-xs overflow-x-auto max-h-[300px] overflow-y-auto">
-                {generateCSS()}
-              </pre>
-            </div>
-
-            {/* JSON Output */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">JSON Configuration</label>
-                <div className="flex gap-2">
-                  <Button onClick={copyJSON} variant="outline" size="sm">
-                    <Copy className="h-4 w-4 mr-2" />
-                    {copiedJSON ? 'Copied!' : 'Copy'}
-                  </Button>
-                  <Button onClick={downloadJSON} variant="outline" size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download
-                  </Button>
-                </div>
-              </div>
-              <pre className="p-4 bg-muted rounded-lg text-xs overflow-x-auto max-h-[200px] overflow-y-auto">
-                {JSON.stringify(theme, null, 2)}
-              </pre>
-            </div>
-          </section>
+            <div className="text-sm text-muted-foreground">Sales Metrics</div>
+          </div>
+          
+          <div id="theme-preview">
+            <SimplyTable
+              columns={columns}
+              rows={sampleData}
+              rowKey="id"
+              enablePagination={true}
+              pageSize={18}
+              className="h-[calc(100vh-240px)]"
+            />
+          </div>
         </div>
       </div>
-
-      {/* Documentation */}
-      <section className="space-y-4 p-6 bg-muted/50 rounded-lg border">
-        <h2 className="text-2xl font-bold">How to Apply Your Theme</h2>
-        <div className="space-y-4 text-sm">
-          <div>
-            <h3 className="font-semibold mb-2">1. Copy the CSS Variables</h3>
-            <p className="text-muted-foreground">
-              Click the "Copy" button in the CSS Variables section above, then paste the CSS into your global stylesheet or a CSS file that's imported before Simply Table.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">2. Add to Your Project</h3>
-            <p className="text-muted-foreground mb-2">
-              Place the CSS variables in your root CSS file (e.g., <code className="px-1.5 py-0.5 bg-background rounded">index.css</code> or <code className="px-1.5 py-0.5 bg-background rounded">App.css</code>):
-            </p>
-            <pre className="p-3 bg-background rounded text-xs overflow-x-auto">
-{`/* In your global CSS file */
-:root {
-  --st-radius: 0.625rem;
-  --st-background: 0 0% 100%;
-  /* ... other variables */
-}
-
-/* Import Simply Table */
-import 'simply-table/dist/style.css';`}
-            </pre>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-2">3. Dark Mode Support</h3>
-            <p className="text-muted-foreground mb-2">
-              To support dark mode, add a <code className="px-1.5 py-0.5 bg-background rounded">.dark</code> class with alternative values:
-            </p>
-            <pre className="p-3 bg-background rounded text-xs overflow-x-auto">
-{`.dark {
-  --st-background: 0 0% 14.5%;
-  --st-foreground: 0 0% 98.5%;
-  /* ... other dark mode variables */
-}`}
-            </pre>
-          </div>
-          <div className="p-4 bg-primary/10 border border-primary/20 rounded">
-            <p className="text-sm">
-              <strong>💡 Tip:</strong> All CSS variables use the <code className="px-1.5 py-0.5 bg-background rounded">--st-</code> prefix to avoid conflicts with your application's styles.
-              The values use HSL format without the <code className="px-1.5 py-0.5 bg-background rounded">hsl()</code> wrapper for easier manipulation.
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function ColorInput({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
-  // Convert HSL string to hex for color picker
-  const hslToHex = (hsl: string): string => {
-    try {
-      const [h, s, l] = hsl.split(' ').map(v => parseFloat(v.replace('%', '')));
-      const hDecimal = h / 360;
-      const sDecimal = s / 100;
-      const lDecimal = l / 100;
-      
-      const c = (1 - Math.abs(2 * lDecimal - 1)) * sDecimal;
-      const x = c * (1 - Math.abs((hDecimal * 6) % 2 - 1));
-      const m = lDecimal - c / 2;
-      
-      let r = 0, g = 0, b = 0;
-      if (hDecimal < 1/6) { r = c; g = x; b = 0; }
-      else if (hDecimal < 2/6) { r = x; g = c; b = 0; }
-      else if (hDecimal < 3/6) { r = 0; g = c; b = x; }
-      else if (hDecimal < 4/6) { r = 0; g = x; b = c; }
-      else if (hDecimal < 5/6) { r = x; g = 0; b = c; }
-      else { r = c; g = 0; b = x; }
-      
-      const toHex = (n: number) => {
-        const hex = Math.round((n + m) * 255).toString(16);
-        return hex.length === 1 ? '0' + hex : hex;
-      };
-      
-      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-    } catch {
-      return '#000000';
-    }
-  };
-
-  // Convert hex to HSL string
-  const hexToHsl = (hex: string): string => {
-    try {
-      const r = parseInt(hex.slice(1, 3), 16) / 255;
-      const g = parseInt(hex.slice(3, 5), 16) / 255;
-      const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      const l = (max + min) / 2;
-
-      if (max === min) {
-        return `0 0% ${Math.round(l * 100)}%`;
-      }
-
-      const d = max - min;
-      const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      
-      let h = 0;
-      if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-      else if (max === g) h = ((b - r) / d + 2) / 6;
-      else h = ((r - g) / d + 4) / 6;
-
-      return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
-    } catch {
-      return '0 0% 0%';
-    }
-  };
-
-  const handleColorPickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const hex = e.target.value;
-    const hsl = hexToHsl(hex);
-    onChange(hsl);
-  };
-
-  return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded-md text-sm"
-          placeholder="0 0% 100%"
-        />
-        <div className="relative">
-          <input
-            type="color"
-            value={hslToHex(value)}
-            onChange={handleColorPickerChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            title="Pick a color"
-          />
-          <div
-            className="w-10 h-10 rounded border cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-            style={{ backgroundColor: `hsl(${value})` }}
-            title="Click to pick a color"
-          />
-        </div>
-      </div>
-      <p className="text-xs text-muted-foreground">HSL format: hue saturation% lightness% (click color box to pick)</p>
     </div>
   );
 }

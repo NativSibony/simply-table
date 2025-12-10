@@ -1,0 +1,70 @@
+/* Theme Builder Custom Styles */
+
+#theme-preview {
+  /* CSS variables will be set dynamically via JavaScript */
+}
+
+/* Apply theme variables to table root */
+#theme-preview [class*="simply-table"] > div:first-child {
+  border: var(--table-border) !important;
+  border-radius: var(--table-radius) !important;
+  background-color: var(--table-background) !important;
+  overflow: hidden !important;
+}
+
+/* Header styling */
+#theme-preview [class*="header"] {
+  background-color: var(--header-background) !important;
+  border-bottom: var(--header-border-bottom) !important;
+}
+
+#theme-preview [class*="headerCell"] {
+  color: var(--header-text-color) !important;
+  font-size: var(--header-font-size) !important;
+  font-weight: var(--header-font-weight) !important;
+  padding: var(--header-padding) !important;
+  border-right: var(--cell-border-right) !important;
+}
+
+/* Row styling - even rows */
+#theme-preview [class*="row"]:nth-child(even) {
+  background-color: var(--row-even-background) !important;
+  color: var(--row-even-text-color) !important;
+}
+
+/* Row styling - odd rows */
+#theme-preview [class*="row"]:nth-child(odd) {
+  background-color: var(--row-odd-background) !important;
+  color: var(--row-odd-text-color) !important;
+}
+
+/* Row hover state */
+#theme-preview [class*="row"]:hover {
+  background-color: var(--row-hover-background) !important;
+  color: var(--row-hover-text-color) !important;
+}
+
+/* Row general styling */
+#theme-preview [class*="row"] {
+  min-height: var(--row-height) !important;
+  border-bottom: var(--row-border-bottom) !important;
+}
+
+/* Cell styling */
+#theme-preview [class*="cell"] {
+  padding: var(--cell-padding) !important;
+  font-size: var(--cell-font-size) !important;
+  border-right: var(--cell-border-right) !important;
+  text-align: var(--cell-alignment) !important;
+}
+
+/* Remove last cell border */
+#theme-preview [class*="cell"]:last-child,
+#theme-preview [class*="headerCell"]:last-child {
+  border-right: none !important;
+}
+
+/* Status badges styling */
+#theme-preview [class*="cell"] > span {
+  display: inline-block;
+}
